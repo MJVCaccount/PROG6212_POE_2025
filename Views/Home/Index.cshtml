@@ -9,7 +9,83 @@
             <p class="mb-0">Welcome to your Contract Monthly Claim System dashboard</p>
         </div>
         <div class="content-body">
-         
+            <div id="dashboard" class="content-container active-section">
+                <div class="content-header">
+                    <h2><i class="fas fa-tachometer-alt me-2"></i>Dashboard Overview</h2>
+                    <p class="mb-0">Welcome to your Contract Monthly Claim System dashboard</p>
+                </div>
+                <div class="content-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="stats-card">
+                                <div class="stats-number">12</div>
+                                <div>Pending Claims</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stats-card">
+                                <div class="stats-number">45</div>
+                                <div>Approved Claims</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stats-card">
+                                <div class="stats-number">3</div>
+                                <div>Under Review</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stats-card">
+                                <div class="stats-number">R85,400</div>
+                                <div>Total Earnings</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-8">
+                            <h4><i class="fas fa-clock me-2"></i>Recent Activity</h4>
+                            <div class="list-group">
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>Claim #CMCS-2025-017</strong> submitted successfully
+                                        <br><small class="text-muted">September 17, 2025, 06:39 PM SAST - 40 hours worked</small>
+                                    </div>
+                                    <span class="status-badge status-pending">Pending</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>Claim #CMCS-2025-016</strong> approved by Academic Manager
+                                        <br><small class="text-muted">September 16, 2025 - R2,000.00</small>
+                                    </div>
+                                    <span class="status-badge status-approved">Approved</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>Claim #CMCS-2025-015</strong> under review by Programme Coordinator
+                                        <br><small class="text-muted">September 15, 2025 - 35 hours worked</small>
+                                    </div>
+                                    <span class="status-badge status-under-review">Under Review</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <h4><i class="fas fa-calendar me-2"></i>Quick Actions</h4>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary" onclick="showSection('submit-claim')">
+                                    <i class="fas fa-plus me-2"></i>Submit New Claim
+                                </button>
+                                <button class="btn btn-outline-primary">
+                                    <i class="fas fa-download me-2"></i>Download Report
+                                </button>
+                                <button class="btn btn-outline-primary" onclick="showSection('documents')">
+                                    <i class="fas fa-paperclip me-2"></i>Upload Documents
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
