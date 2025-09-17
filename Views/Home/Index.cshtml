@@ -268,4 +268,140 @@
             </div>
         </div>
     </div>
+    <div id="approve-claims" class="content-container hidden">
+        <div class="content-header">
+            <h2><i class="fas fa-check-circle me-2"></i>Claims Approval Management</h2>
+            <p class="mb-0">Review and approve submitted claims (Programme Coordinator / Academic Manager View)</p>
+        </div>
+        <div class="content-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <h4>Pending Approvals <span class="badge bg-warning">8</span></h4>
+                </div>
+                <div class="col-md-6">
+                    <div class="btn-group" role="group">
+                        <input type="radio" class="btn-check" name="approval-filter" id="all-claims" checked>
+                        <label class="btn btn-outline-primary" for="all-claims">All Claims</label>
+
+                        <input type="radio" class="btn-check" name="approval-filter" id="pending-only">
+                        <label class="btn btn-outline-primary" for="pending-only">Pending Only</label>
+
+                        <input type="radio" class="btn-check" name="approval-filter" id="urgent-claims">
+                        <label class="btn btn-outline-primary" for="urgent-claims">Urgent</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Claim ID</th>
+                            <th>Lecturer</th>
+                            <th>Module</th>
+                            <th>Hours</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Documents</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>CMCS-2025-017</strong></td>
+                            <td>Sarah Johnson</td>
+                            <td>WEB6234</td>
+                            <td>38</td>
+                            <td>R 13,300.00</td>
+                            <td><span class="status-badge status-pending">Pending</span></td>
+                            <td><i class="fas fa-paperclip text-success"></i> 2 files</td>
+                            <td>
+                                <button class="action-btn btn btn-success btn-sm">
+                                    <i class="fas fa-check"></i> Approve
+                                </button>
+                                <button class="action-btn btn btn-danger btn-sm">
+                                    <i class="fas fa-times"></i> Reject
+                                </button>
+                                <button class="action-btn btn btn-info btn-sm">
+                                    <i class="fas fa-eye"></i> Review
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>CMCS-2025-016</strong></td>
+                            <td>Michael Chen</td>
+                            <td>DATA6222</td>
+                            <td>45</td>
+                            <td>R 15,750.00</td>
+                            <td><span class="status-badge status-pending">Pending</span></td>
+                            <td><i class="fas fa-paperclip text-success"></i> 1 file</td>
+                            <td>
+                                <button class="action-btn btn btn-success btn-sm">
+                                    <i class="fas fa-check"></i> Approve
+                                </button>
+                                <button class="action-btn btn btn-danger btn-sm">
+                                    <i class="fas fa-times"></i> Reject
+                                </button>
+                                <button class="action-btn btn btn-info btn-sm">
+                                    <i class="fas fa-eye"></i> Review
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>CMCS-2025-015</strong></td>
+                            <td>Emma Wilson</td>
+                            <td>PROG6212</td>
+                            <td>40</td>
+                            <td>R 14,000.00</td>
+                            <td><span class="status-badge status-under-review">Under Review</span></td>
+                            <td><i class="fas fa-exclamation-triangle text-warning"></i> Missing</td>
+                            <td>
+                                <button class="action-btn btn btn-warning btn-sm">
+                                    <i class="fas fa-clock"></i> Request Docs
+                                </button>
+                                <button class="action-btn btn btn-info btn-sm">
+                                    <i class="fas fa-eye"></i> Review
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Approval Statistics</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6 text-center">
+                                    <h3 class="text-success">156</h3>
+                                    <small>Approved This Month</small>
+                                </div>
+                                <div class="col-6 text-center">
+                                    <h3 class="text-warning">8</h3>
+                                    <small>Pending Review</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Quick Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-success">Bulk Approve Selected</button>
+                                <button class="btn btn-outline-primary">Export Approval Report</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
