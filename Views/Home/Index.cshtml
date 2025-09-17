@@ -159,4 +159,113 @@
             </form>
         </div>
     </div>
+    <div id="view-claims" class="content-container hidden">
+        <div class="content-header">
+            <h2><i class="fas fa-list me-2"></i>My Claims History</h2>
+            <p class="mb-0">Track and manage all your submitted claims</p>
+        </div>
+        <div class="content-body">
+            <div class="row mb-3">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search claims...">
+                        <button class="btn btn-outline-secondary"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select">
+                        <option>All Status</option>
+                        <option>Pending</option>
+                        <option>Approved</option>
+                        <option>Under Review</option>
+                        <option>Rejected</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="claim-card card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-3">
+                            <h5 class="mb-1">CMCS-2025-017</h5>
+                            <small class="text-muted">Sept 17, 2025, 06:46 PM SAST</small>
+                        </div>
+                        <div class="col-md-2">
+                            <strong>40 Hours</strong>
+                        </div>
+                        <div class="col-md-2">
+                            <strong>R 14,000.00</strong>
+                        </div>
+                        <div class="col-md-3">
+                            <span class="status-badge status-pending">Pending Review</span>
+                            <div class="progress-tracker mt-2">
+                                <div class="progress-step completed"><i class="fas fa-check"></i></div>
+                                <div class="progress-step active"><i class="fas fa-eye"></i></div>
+                                <div class="progress-step"><i class="fas fa-check-circle"></i></div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-sm btn-outline-primary">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="claim-card card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-3">
+                            <h5 class="mb-1">CMCS-2025-016</h5>
+                            <small class="text-muted">Sept 16, 2025</small>
+                        </div>
+                        <div class="col-md-2">
+                            <strong>35 Hours</strong>
+                        </div>
+                        <div class="col-md-2">
+                            <strong>R 12,250.00</strong>
+                        </div>
+                        <div class="col-md-3">
+                            <span class="status-badge status-approved">Approved</span>
+                            <div class="progress-tracker mt-2">
+                                <div class="progress-step completed"><i class="fas fa-check"></i></div>
+                                <div class="progress-step completed"><i class="fas fa-eye"></i></div>
+                                <div class="progress-step completed"><i class="fas fa-check-circle"></i></div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-sm btn-success">Download Invoice</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="claim-card card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-3">
+                            <h5 class="mb-1">CMCS-2025-015</h5>
+                            <small class="text-muted">Sept 15, 2025</small>
+                        </div>
+                        <div class="col-md-2">
+                            <strong>42 Hours</strong>
+                        </div>
+                        <div class="col-md-2">
+                            <strong>R 14,700.00</strong>
+                        </div>
+                        <div class="col-md-3">
+                            <span class="status-badge status-under-review">Under Review</span>
+                            <div class="progress-tracker mt-2">
+                                <div class="progress-step completed"><i class="fas fa-check"></i></div>
+                                <div class="progress-step active"><i class="fas fa-eye"></i></div>
+                                <div class="progress-step"><i class="fas fa-check-circle"></i></div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-sm btn-outline-primary">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
