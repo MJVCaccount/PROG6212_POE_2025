@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Contract_Monthly_Claim_System.Models.Claim>
+
+@{
+    ViewData["Title"] = "View Claims";
+}
+
+<h2>View Claims</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Hours</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Documents</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var claim in Model)
+        {
+            <tr>
+                <td>@claim.Id.Substring(0, 8)</td>
+                <td>@claim.HoursWorked</td>
+                <td>R@claim.Amount</td>
+                <td>
+                    <span class="status-badge status-@claim.Status.ToString().ToLower()">@claim.Status</span>
+                    @if (claim.Status == ClaimStatus.Pending)
+                    {
+                        <div class="progress"><div class="progress-bar" style="width: 33%;">Pending</div></div>
+                    }
+                    else if (claim.Status == ClaimStatus.UnderReview)
+                    {
+                        <div class="progress"><div class="progress-bar" style="width: 66%;">Under Review</div></div>
+                    }
+                    else
+                    {
+                        <div class="progress"><div class="progress-bar" style="width: 100%;">@claim.Status</div></div>
+                    }
+                </td>
+                <td>
+                    @foreach (var doc in claim.Documents)
+                    {
+                        <a asp-action="DownloadDocument" asp-route-docId="@doc.Id">@doc.FileName</a>
+                
+                        <br />
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,66 @@
+﻿@model IEnumerable<Contract_Monthly_Claim_System.Models.Claim>
+
+@{
+    ViewData["Title"] = "Coordinator Approve";
+}
+
+<div class="content-header">
+    <h2><i class="fas fa-check-circle me-2"></i>Coordinator Claims Approval</h2>
+    <p class="mb-0">Review pending claims</p>
+</div>
+<div class="content-body">
+    <h4>Pending Approvals <span class="badge bg-warning">@Model.Count()</span></h4>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Lecturer</th>
+                    <th>Module</th>
+                    <th>Hours</th>
+                    <th>Amount</th>
+                    <th>Documents</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var claim in Model)
+                {
+                    <tr>
+                        <td>@claim.Id.Substring(0, 8)</td>
+                        <td>@claim.LecturerId</td>
+                        <td>@claim.Module</td>
+                        <td>@claim.HoursWorked</td>
+                        <td>R @claim.Amount.ToString("N2")</td>
+                        <td>
+                            @if (claim.Documents.Any())
+                            {
+                                foreach (var doc in claim.Documents)
+                                {
+                                    <a asp-action="DownloadDocument" asp-route-docId="@doc.Id">@doc.FileName</a>
+                        
+                                    <br />
+                                }
+                            }
+                            else
+                            {
+                                <i class="fas fa-exclamation-triangle text-warning"></i>
+                                <span>None</span>
+                            }
+                        </td>
+                        <td>
+                            <form asp-action="Verify" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@claim.Id" />
+                                <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-check"></i> Verify</button>
+                            </form>
+                            <form asp-action="RejectCoordinator" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@claim.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-times"></i> Reject</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
