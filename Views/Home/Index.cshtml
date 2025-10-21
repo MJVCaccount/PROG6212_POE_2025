@@ -1,407 +1,1059 @@
-﻿@{
+﻿@model Contract_Monthly_Claim_System.Models.DashboardViewModel
+@{
     ViewData["Title"] = "Dashboard";
 }
 
-<main>
-    <div id="dashboard" class="content-container active-section">
-        <div class="content-header">
-            <h2><i class="fas fa-tachometer-alt me-2"></i>Dashboard Overview</h2>
-            <p class="mb-0">Welcome to your Contract Monthly Claim System dashboard</p>
-        </div>
-        <div class="content-body">
-            <div id="dashboard" class="content-container active-section">
-                <div class="content-header">
-                    <h2><i class="fas fa-tachometer-alt me-2"></i>Dashboard Overview</h2>
-                    <p class="mb-0">Welcome to your Contract Monthly Claim System dashboard</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contract Monthly Claim System - IIE</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --iie-blue: #003087;
+            --iie-white: #FFFFFF;
+            --iie-light-blue: #0066CC;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--iie-blue) 0%, var(--iie-light-blue) 100%);
+            color: var(--iie-white);
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar {
+            background-color: var(--iie-white);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+        }
+
+            .navbar .nav-link {
+                color: var(--iie-blue);
+                font-weight: 500;
+                padding: 10px 20px;
+                transition: all 0.3s ease;
+            }
+
+                .navbar .nav-link:hover,
+                .navbar .nav-link.active {
+                    background-color: var(--iie-blue);
+                    color: var(--iie-white);
+                    border-radius: 5px;
+                }
+
+        .content-container {
+            background: var(--iie-white);
+            border-radius: 10px;
+            padding: 30px;
+            margin: 30px auto;
+            max-width: 1400px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+            .content-container.hidden {
+                display: none;
+            }
+
+        .content-header {
+            border-bottom: 3px solid var(--iie-blue);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+            .content-header h2 {
+                color: var(--iie-blue);
+                font-weight: 600;
+            }
+
+        .stats-card {
+            background: linear-gradient(135deg, var(--iie-blue) 0%, var(--iie-light-blue) 100%);
+            color: var(--iie-white);
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0, 48, 135, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+            .stats-card:hover {
+                transform: translateY(-5px);
+            }
+
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .status-badge {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+
+        .status-pending {
+            background-color: var(--warning);
+            color: #000;
+        }
+
+        .status-underreview {
+            background-color: var(--info);
+            color: var(--iie-white);
+        }
+
+        .status-approved {
+            background-color: var(--success);
+            color: var(--iie-white);
+        }
+
+        .status-rejected {
+            background-color: var(--danger);
+            color: var(--iie-white);
+        }
+
+        .progress-tracker {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .progress-step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+            .progress-step.completed {
+                background: var(--success);
+                color: var(--iie-white);
+            }
+
+            .progress-step.active {
+                background: var(--info);
+                color: var(--iie-white);
+                animation: pulse 2s infinite;
+            }
+
+        @@keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid var(--iie-blue);
+        }
+
+            .form-section h4 {
+                color: var(--iie-blue);
+                margin-bottom: 20px;
+            }
+
+        .btn-primary {
+            background-color: var(--iie-blue);
+            border-color: var(--iie-blue);
+        }
+
+            .btn-primary:hover {
+                background-color: var(--iie-light-blue);
+                border-color: var(--iie-light-blue);
+            }
+
+        .claim-card {
+            border-left: 4px solid var(--iie-blue);
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+            .claim-card:hover {
+                box-shadow: 0 4px 15px rgba(0, 48, 135, 0.2);
+            }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+            .error-message.show {
+                display: block;
+            }
+
+        .success-message {
+            color: var(--success);
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+            .success-message.show {
+                display: block;
+            }
+
+        .uploaded-file-item {
+            background: #e9ecef;
+            padding: 8px 12px;
+            border-radius: 5px;
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+            .uploaded-file-item .remove-btn {
+                color: var(--danger);
+                cursor: pointer;
+                font-weight: bold;
+            }
+
+        .footer {
+            background-color: var(--iie-blue);
+            color: var(--iie-white);
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+
+        .table-dark {
+            background-color: var(--iie-blue);
+        }
+
+        .encrypted-badge {
+            background-color: #6c757d;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h3><i class="fas fa-university me-2"></i>Contract Monthly Claim System</h3>
+                    <p class="mb-0">Independent Institute of Education</p>
                 </div>
-                <div class="content-body">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="stats-card">
-                                <div class="stats-number">12</div>
-                                <div>Pending Claims</div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="stats-card">
-                                <div class="stats-number">45</div>
-                                <div>Approved Claims</div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="stats-card">
-                                <div class="stats-number">3</div>
-                                <div>Under Review</div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="stats-card">
-                                <div class="stats-number">R85,400</div>
-                                <div>Total Earnings</div>
-                            </div>
+                <div class="col-md-6 text-end">
+                    <small>Logged in as: <strong>@Model.RecentClaims.FirstOrDefault()?.LecturerId ?? "IIE2024001"</strong></small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link active" href="#" onclick="showSection('dashboard')"><i class="fas fa-home me-1"></i>Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('submit-claim')"><i class="fas fa-plus-circle me-1"></i>Submit Claim</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('view-claims')"><i class="fas fa-list me-1"></i>My Claims</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('coordinator-view')"><i class="fas fa-user-check me-1"></i>Coordinator</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('manager-view')"><i class="fas fa-user-tie me-1"></i>Manager</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div id="dashboard" class="content-container active-section">
+            <div class="content-header">
+                <h2><i class="fas fa-tachometer-alt me-2"></i>Dashboard Overview</h2>
+                <p class="mb-0">Welcome to your Contract Monthly Claim System dashboard</p>
+            </div>
+            <div class="content-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <div class="stats-number" id="stat-pending">@Model.PendingClaims</div>
+                            <div>Pending Claims</div>
                         </div>
                     </div>
-
-                    <div class="row mt-4">
-                        <div class="col-md-8">
-                            <h4><i class="fas fa-clock me-2"></i>Recent Activity</h4>
-                            <div class="list-group">
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <div class="stats-number" id="stat-approved">@Model.ApprovedClaims</div>
+                            <div>Approved Claims</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <div class="stats-number" id="stat-review">@Model.UnderReviewClaims</div>
+                            <div>Under Review</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <div class="stats-number">R @Model.TotalEarnings.ToString("N2")</div>
+                            <div>Total Earnings</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-8">
+                        <h4><i class="fas fa-clock me-2"></i>Recent Activity</h4>
+                        <div class="list-group" id="recent-activity">
+                            @foreach (var claim in Model.RecentClaims)
+                            {
                                 <div class="list-group-item d-flex justify-content-between align-items-center">
                                     <div>
-                                        <strong>Claim #CMCS-2025-017</strong> submitted successfully
-                                        <br><small class="text-muted">September 17, 2025, 06:39 PM SAST - 40 hours worked</small>
+                                        <strong>Claim #@claim.Id.Substring(0, 8)</strong> - @claim.Module
+                                        <br><small class="text-muted">@claim.SubmitDate.ToString("MMM dd, yyyy HH:mm") - @claim.HoursWorked hours worked</small>
                                     </div>
-                                    <span class="status-badge status-pending">Pending</span>
+                                    <span class="status-badge status-@claim.Status.ToString().ToLower()">@claim.Status</span>
                                 </div>
-                                <div class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <strong>Claim #CMCS-2025-016</strong> approved by Academic Manager
-                                        <br><small class="text-muted">September 16, 2025 - R2,000.00</small>
-                                    </div>
-                                    <span class="status-badge status-approved">Approved</span>
-                                </div>
-                                <div class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <strong>Claim #CMCS-2025-015</strong> under review by Programme Coordinator
-                                        <br><small class="text-muted">September 15, 2025 - 35 hours worked</small>
-                                    </div>
-                                    <span class="status-badge status-under-review">Under Review</span>
-                                </div>
-                            </div>
+                            }
                         </div>
-                        <div class="col-md-4">
-                            <h4><i class="fas fa-calendar me-2"></i>Quick Actions</h4>
-                            <div class="d-grid gap-2">
-                                <button class="btn btn-primary" onclick="showSection('submit-claim')">
-                                    <i class="fas fa-plus me-2"></i>Submit New Claim
-                                </button>
-                                <button class="btn btn-outline-primary">
-                                    <i class="fas fa-download me-2"></i>Download Report
-                                </button>
-                                <button class="btn btn-outline-primary" onclick="showSection('documents')">
-                                    <i class="fas fa-paperclip me-2"></i>Upload Documents
-                                </button>
-                            </div>
+                    </div>
+                    <div class="col-md-4">
+                        <h4><i class="fas fa-calendar me-2"></i>Quick Actions</h4>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary" onclick="showSection('submit-claim')">
+                                <i class="fas fa-plus me-2"></i>Submit New Claim
+                            </button>
+                            <button class="btn btn-outline-primary" onclick="exportReport()">
+                                <i class="fas fa-download me-2"></i>Export Report
+                            </button>
+                            <button class="btn btn-outline-primary" onclick="showSection('view-claims')">
+                                <i class="fas fa-eye me-2"></i>View All Claims
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <div id="submit-claim" class="content-container hidden">
+            <div class="content-header">
+                <h2><i class="fas fa-plus-circle me-2"></i>Submit Monthly Claim</h2>
+                <p class="mb-0">Complete the form below to submit your monthly claim</p>
+            </div>
+            <div class="content-body">
+                <form id="claimForm" action="/Claim/Submit" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <div class="form-section">
+                        <h4><i class="fas fa-user me-2"></i>Lecturer Information</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="lecturer-name" class="form-label">Lecturer Name</label>
+                                <input type="text" id="lecturer-name" class="form-control" value="John Doe" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="employee-id" class="form-label">Employee ID</label>
+                                <input type="text" id="employee-id" name="LecturerId" class="form-control" value="IIE2024001" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <h4><i class="fas fa-calculator me-2"></i>Claim Details</h4>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="hours-worked" class="form-label">Hours Worked <span class="text-danger">*</span></label>
+                                <input type="number" id="hours-worked" name="HoursWorked" class="form-control" placeholder="Enter hours" min="1" max="160" step="0.5" required oninput="calculateTotal()">
+                                <small class="text-muted">Range: 1-160 hours</small>
+                                <div class="error-message" id="hours-error">Hours must be between 1 and 160</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="hourly-rate" class="form-label">Hourly Rate (R)</label>
+                                <input type="text" id="hourly-rate" name="HourlyRate" class="form-control" value="350.00" readonly>
+                                <small class="text-muted">Rate: R200-R500</small>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="total-amount" class="form-label">Total Amount</label>
+                                <input type="text" id="total-amount" name="Amount" class="form-control" value="R 0.00" readonly>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <label for="module" class="form-label">Module/Subject <span class="text-danger">*</span></label>
+                                <select id="module" name="Module" class="form-select" required>
+                                    <option value="">Select Module</option>
+                                    <option value="PROG6212">PROG6212 - Programming 2B</option>
+                                    <option value="DATA6222">DATA6222 - Database Systems</option>
+                                    <option value="WEB6234">WEB6234 - Web Development</option>
+                                </select>
+                                <div class="error-message" id="module-error">Please select a module</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="claim-period" class="form-label">Month/Period <span class="text-danger">*</span></label>
+                                <input type="month" id="claim-period" name="ClaimPeriod" class="form-control" value="2025-10" required>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <label for="notes" class="form-label">Additional Notes</label>
+                                <textarea id="notes" name="Notes" class="form-control" rows="3" maxlength="500" placeholder="Add any additional notes (max 500 characters)" oninput="updateCharCount()"></textarea>
+                                <small class="text-muted"><span id="char-count">0</span>/500 characters</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <h4><i class="fas fa-paperclip me-2"></i>Supporting Documents</h4>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="documents" class="form-label">Upload Documents</label>
+                                <input type="file" id="documents" name="Documents" class="form-control" multiple accept=".pdf,.docx,.xlsx" onchange="handleFileUpload(event)">
+                                <small class="text-muted">Accepted: .pdf, .docx, .xlsx (max 5MB each) - Files will be encrypted</small>
+                                <div id="uploaded-files" class="mt-3"></div>
+                                <div class="error-message" id="upload-error"></div>
+                                <div class="success-message" id="upload-success"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg" id="submit-btn">
+                            <i class="fas fa-paper-plane me-2"></i>Submit Claim
+                        </button>
+                        <button type="reset" class="btn btn-outline-secondary btn-lg ms-3" onclick="resetForm()">
+                            <i class="fas fa-undo me-2"></i>Reset Form
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="view-claims" class="content-container hidden">
+            <div class="content-header">
+                <h2><i class="fas fa-list me-2"></i>My Claims History</h2>
+                <p class="mb-0">Track and manage all your submitted claims</p>
+            </div>
+            <div class="content-body">
+                <div class="row mb-3">
+                    <div class="col-md-8">
+                        <div class="input-group">
+                            <input type="text" id="search-claims" class="form-control" placeholder="Search claims..." oninput="searchClaims()">
+                            <button class="btn btn-outline-secondary"><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <select class="form-select" id="status-filter" onchange="filterClaims(this.value)">
+                            <option value="all">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="underreview">Under Review</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="claims-list">
+                    <!-- Claims will be dynamically loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <div id="coordinator-view" class="content-container hidden">
+            <div class="content-header">
+                <h2><i class="fas fa-user-check me-2"></i>Coordinator Claims Verification</h2>
+                <p class="mb-0">Review and verify pending claims</p>
+            </div>
+            <div class="content-body">
+                <h4>Pending Verification <span class="badge bg-warning" id="coord-pending-count">0</span></h4>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Claim ID</th>
+                                <th>Lecturer</th>
+                                <th>Module</th>
+                                <th>Hours</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Documents</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="coordinator-claims-body">
+                            <!-- Claims will be loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="manager-view" class="content-container hidden">
+            <div class="content-header">
+                <h2><i class="fas fa-user-tie me-2"></i>Manager Claims Approval</h2>
+                <p class="mb-0">Approve or reject verified claims</p>
+            </div>
+            <div class="content-body">
+                <h4>Awaiting Approval <span class="badge bg-info" id="manager-pending-count">0</span></h4>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Claim ID</th>
+                                <th>Lecturer</th>
+                                <th>Module</th>
+                                <th>Hours</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Documents</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="manager-claims-body">
+                            <!-- Claims will be loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="footer">
+        <p>&copy; 2025 The Independent Institute of Education (Pty) Ltd. All rights reserved.</p>
     </div>
-    <div id="submit-claim" class="content-container hidden">
-        <div class="content-header">
-            <h2><i class="fas fa-plus-circle me-2"></i>Submit Monthly Claim</h2>
-            <p class="mb-0">Complete the form below to submit your monthly claim</p>
-        </div>
-        <div class="content-body">
-            <form>
-                <div class="form-section">
-                    <h4><i class="fas fa-user me-2"></i>Lecturer Information</h4>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label for="lecturer-name" class="form-label">Lecturer Name</label>
-                            <input type="text" id="lecturer-name" class="form-control" value="John Doe" readonly>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="employee-id" class="form-label">Employee ID</label>
-                            <input type="text" id="employee-id" class="form-control" value="IIE2024001" readonly>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="form-section">
-                    <h4><i class="fas fa-calendar me-2"></i>Claim Details</h4>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label for="hours-worked" class="form-label">Hours Worked</label>
-                            <input type="number" id="hours-worked" class="form-control" placeholder="Enter hours worked" min="1" max="160">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="hourly-rate" class="form-label">Hourly Rate (R)</label>
-                            <input type="text" id="hourly-rate" class="form-control" value="R 350.00" readonly>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="total-amount" class="form-label">Total Amount</label>
-                            <input type="text" id="total-amount" class="form-control" value="R 0.00" readonly>
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-md-6">
-                            <label for="module" class="form-label">Module/Subject</label>
-                            <select id="module" class="form-select">
-                                <option>Select Module</option>
-                                <option>PROG6212 - Programming 2B</option>
-                                <option>DATA6222 - Database Systems</option>
-                                <option>WEB6234 - Web Development</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="claim-period" class="form-label">Month/Period</label>
-                            <input type="month" id="claim-period" class="form-control" value="2025-09">
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-12">
-                            <label for="notes" class="form-label">Additional Notes</label>
-                            <textarea id="notes" class="form-control" rows="3" placeholder="Add any additional notes or comments about your claim"></textarea>
-                        </div>
-                    </div>
-                </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script>
+        // Encryption key (in production, use secure key management)
+        const ENCRYPTION_KEY = 'SecureKey123456!';
 
-                <div class="text-center">
-                    <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="fas fa-paper-plane me-2"></i>Submit Claim
-                    </button>
-                    <button type="reset" class="btn btn-outline-secondary btn-lg ms-3">
-                        <i class="fas fa-undo me-2"></i>Reset Form
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-    <div id="view-claims" class="content-container hidden">
-        <div class="content-header">
-            <h2><i class="fas fa-list me-2"></i>My Claims History</h2>
-            <p class="mb-0">Track and manage all your submitted claims</p>
-        </div>
-        <div class="content-body">
-            <div class="row mb-3">
-                <div class="col-md-8">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search claims...">
-                        <button class="btn btn-outline-secondary"><i class="fas fa-search"></i></button>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <select class="form-select">
-                        <option>All Status</option>
-                        <option>Pending</option>
-                        <option>Approved</option>
-                        <option>Under Review</option>
-                        <option>Rejected</option>
-                    </select>
-                </div>
-            </div>
+        // In-memory claims storage
+        let claims = @Html.Raw(Json.Serialize(Model.RecentClaims));
+        let uploadedFiles = [];
 
-            <div class="claim-card card">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-md-3">
-                            <h5 class="mb-1">CMCS-2025-017</h5>
-                            <small class="text-muted">Sept 17, 2025, 06:46 PM SAST</small>
-                        </div>
-                        <div class="col-md-2">
-                            <strong>40 Hours</strong>
-                        </div>
-                        <div class="col-md-2">
-                            <strong>R 14,000.00</strong>
-                        </div>
-                        <div class="col-md-3">
-                            <span class="status-badge status-pending">Pending Review</span>
-                            <div class="progress-tracker mt-2">
-                                <div class="progress-step completed"><i class="fas fa-check"></i></div>
-                                <div class="progress-step active"><i class="fas fa-eye"></i></div>
-                                <div class="progress-step"><i class="fas fa-check-circle"></i></div>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <button class="btn btn-sm btn-outline-primary">View Details</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        // Load claims from localStorage with decryption
+        function loadClaimsFromStorage() {
+            const encrypted = localStorage.getItem('cmcs_claims');
+            if (encrypted) {
+                try {
+                    const decrypted = CryptoJS.AES.decrypt(encrypted, ENCRYPTION_KEY).toString(CryptoJS.enc.Utf8);
+                    claims = JSON.parse(decrypted);
+                } catch (e) {
+                    console.error('Error loading claims:', e);
+                    claims = [];
+                }
+            }
+        }
 
-            <div class="claim-card card">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-md-3">
-                            <h5 class="mb-1">CMCS-2025-016</h5>
-                            <small class="text-muted">Sept 16, 2025</small>
-                        </div>
-                        <div class="col-md-2">
-                            <strong>35 Hours</strong>
-                        </div>
-                        <div class="col-md-2">
-                            <strong>R 12,250.00</strong>
-                        </div>
-                        <div class="col-md-3">
-                            <span class="status-badge status-approved">Approved</span>
-                            <div class="progress-tracker mt-2">
-                                <div class="progress-step completed"><i class="fas fa-check"></i></div>
-                                <div class="progress-step completed"><i class="fas fa-eye"></i></div>
-                                <div class="progress-step completed"><i class="fas fa-check-circle"></i></div>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <button class="btn btn-sm btn-success">Download Invoice</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        // Save claims to localStorage with encryption
+        function saveClaimsToStorage() {
+            const encrypted = CryptoJS.AES.encrypt(JSON.stringify(claims), ENCRYPTION_KEY).toString();
+            localStorage.setItem('cmcs_claims', encrypted);
+        }
 
-            <div class="claim-card card">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-md-3">
-                            <h5 class="mb-1">CMCS-2025-015</h5>
-                            <small class="text-muted">Sept 15, 2025</small>
-                        </div>
-                        <div class="col-md-2">
-                            <strong>42 Hours</strong>
-                        </div>
-                        <div class="col-md-2">
-                            <strong>R 14,700.00</strong>
-                        </div>
-                        <div class="col-md-3">
-                            <span class="status-badge status-under-review">Under Review</span>
-                            <div class="progress-tracker mt-2">
-                                <div class="progress-step completed"><i class="fas fa-check"></i></div>
-                                <div class="progress-step active"><i class="fas fa-eye"></i></div>
-                                <div class="progress-step"><i class="fas fa-check-circle"></i></div>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <button class="btn btn-sm btn-outline-primary">View Details</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="approve-claims" class="content-container hidden">
-        <div class="content-header">
-            <h2><i class="fas fa-check-circle me-2"></i>Claims Approval Management</h2>
-            <p class="mb-0">Review and approve submitted claims (Programme Coordinator / Academic Manager View)</p>
-        </div>
-        <div class="content-body">
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <h4>Pending Approvals <span class="badge bg-warning">8</span></h4>
-                </div>
-                <div class="col-md-6">
-                    <div class="btn-group" role="group">
-                        <input type="radio" class="btn-check" name="approval-filter" id="all-claims" checked>
-                        <label class="btn btn-outline-primary" for="all-claims">All Claims</label>
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadClaimsFromStorage();
+            updateDashboard();
+            loadViewClaims();
+            loadCoordinatorClaims();
+            loadManagerClaims();
+        });
 
-                        <input type="radio" class="btn-check" name="approval-filter" id="pending-only">
-                        <label class="btn btn-outline-primary" for="pending-only">Pending Only</label>
+        // Show/hide sections
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-container').forEach(container => {
+                container.classList.add('hidden');
+            });
+            document.getElementById(sectionId).classList.remove('hidden');
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            const activeLink = document.querySelector(`[onclick="showSection('${sectionId}')"]`);
+            if (activeLink) activeLink.classList.add('active');
+            if (sectionId === 'view-claims') loadViewClaims();
+            if (sectionId === 'coordinator-view') loadCoordinatorClaims();
+            if (sectionId === 'manager-view') loadManagerClaims();
+        }
 
-                        <input type="radio" class="btn-check" name="approval-filter" id="urgent-claims">
-                        <label class="btn btn-outline-primary" for="urgent-claims">Urgent</label>
-                    </div>
-                </div>
-            </div>
+        // Calculate total amount
+        function calculateTotal() {
+            const hours = parseFloat(document.getElementById('hours-worked').value) || 0;
+            const rate = parseFloat(document.getElementById('hourly-rate').value.replace('R', '').trim()) || 350.00;
+            const total = hours * rate;
+            document.getElementById('total-amount').value = `R ${total.toFixed(2)}`;
+            const hoursError = document.getElementById('hours-error');
+            if (hours < 1 || hours > 160) hoursError.classList.add('show');
+            else hoursError.classList.remove('show');
+        }
 
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Claim ID</th>
-                            <th>Lecturer</th>
-                            <th>Module</th>
-                            <th>Hours</th>
-                            <th>Amount</th>
-                            <th>Status</th>
-                            <th>Documents</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>CMCS-2025-017</strong></td>
-                            <td>Sarah Johnson</td>
-                            <td>WEB6234</td>
-                            <td>38</td>
-                            <td>R 13,300.00</td>
-                            <td><span class="status-badge status-pending">Pending</span></td>
-                            <td><i class="fas fa-paperclip text-success"></i> 2 files</td>
-                            <td>
-                                <button class="action-btn btn btn-success btn-sm">
-                                    <i class="fas fa-check"></i> Approve
-                                </button>
-                                <button class="action-btn btn btn-danger btn-sm">
-                                    <i class="fas fa-times"></i> Reject
-                                </button>
-                                <button class="action-btn btn btn-info btn-sm">
-                                    <i class="fas fa-eye"></i> Review
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>CMCS-2025-016</strong></td>
-                            <td>Michael Chen</td>
-                            <td>DATA6222</td>
-                            <td>45</td>
-                            <td>R 15,750.00</td>
-                            <td><span class="status-badge status-pending">Pending</span></td>
-                            <td><i class="fas fa-paperclip text-success"></i> 1 file</td>
-                            <td>
-                                <button class="action-btn btn btn-success btn-sm">
-                                    <i class="fas fa-check"></i> Approve
-                                </button>
-                                <button class="action-btn btn btn-danger btn-sm">
-                                    <i class="fas fa-times"></i> Reject
-                                </button>
-                                <button class="action-btn btn btn-info btn-sm">
-                                    <i class="fas fa-eye"></i> Review
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>CMCS-2025-015</strong></td>
-                            <td>Emma Wilson</td>
-                            <td>PROG6212</td>
-                            <td>40</td>
-                            <td>R 14,000.00</td>
-                            <td><span class="status-badge status-under-review">Under Review</span></td>
-                            <td><i class="fas fa-exclamation-triangle text-warning"></i> Missing</td>
-                            <td>
-                                <button class="action-btn btn btn-warning btn-sm">
-                                    <i class="fas fa-clock"></i> Request Docs
-                                </button>
-                                <button class="action-btn btn btn-info btn-sm">
-                                    <i class="fas fa-eye"></i> Review
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        // Update character count for notes
+        function updateCharCount() {
+            const notes = document.getElementById('notes').value;
+            document.getElementById('char-count').textContent = notes.length;
+        }
 
-            <div class="row mt-4">
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>Approval Statistics</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-6 text-center">
-                                    <h3 class="text-success">156</h3>
-                                    <small>Approved This Month</small>
-                                </div>
-                                <div class="col-6 text-center">
-                                    <h3 class="text-warning">8</h3>
-                                    <small>Pending Review</small>
+        // Handle file upload with encryption
+        function handleFileUpload(event) {
+            const files = Array.from(event.target.files);
+            const errorDiv = document.getElementById('upload-error');
+            const successDiv = document.getElementById('upload-success');
+            errorDiv.classList.remove('show');
+            errorDiv.textContent = '';
+            successDiv.classList.remove('show');
+            uploadedFiles = [];
+
+            for (const file of files) {
+                if (file.size > 5 * 1024 * 1024) {
+                    errorDiv.textContent = `File "${file.name}" exceeds 5MB limit.`;
+                    errorDiv.classList.add('show');
+                    return;
+                }
+                const ext = file.name.split('.').pop().toLowerCase();
+                if (!['pdf', 'docx', 'xlsx'].includes(ext)) {
+                    errorDiv.textContent = `Invalid file type for "${file.name}". Only .pdf, .docx, .xlsx allowed.`;
+                    errorDiv.classList.add('show');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const encryptedContent = CryptoJS.AES.encrypt(e.target.result, ENCRYPTION_KEY).toString();
+                    uploadedFiles.push({ name: file.name, content: encryptedContent });
+                    displayUploadedFiles();
+                    successDiv.textContent = `${uploadedFiles.length} file(s) encrypted and ready for upload.`;
+                    successDiv.classList.add('show');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Display uploaded files
+        function displayUploadedFiles() {
+            const container = document.getElementById('uploaded-files');
+            container.innerHTML = '';
+            uploadedFiles.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'uploaded-file-item';
+                fileItem.innerHTML = `
+                    <span><i class="fas fa-file me-2"></i>${file.name} <span class="encrypted-badge"><i class="fas fa-lock"></i> Encrypted</span></span>
+                    <span class="remove-btn" onclick="removeFile(${index})"><i class="fas fa-times"></i></span>
+                `;
+                container.appendChild(fileItem);
+            });
+        }
+
+        // Remove file from upload list
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            displayUploadedFiles();
+        }
+
+        // Reset form
+        function resetForm() {
+            document.getElementById('claimForm').reset();
+            uploadedFiles = [];
+            document.getElementById('uploaded-files').innerHTML = '';
+            document.getElementById('total-amount').value = 'R 0.00';
+            document.getElementById('char-count').textContent = '0';
+            document.querySelectorAll('.error-message').forEach(el => el.classList.remove('show'));
+            document.querySelectorAll('.success-message').forEach(el => el.classList.remove('show'));
+        }
+
+        // Submit claim
+        function submitClaim(event) {
+            event.preventDefault();
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Submitting...';
+
+            try {
+                const hours = parseFloat(document.getElementById('hours-worked').value);
+                const module = document.getElementById('module').value;
+                const period = document.getElementById('claim-period').value;
+                const notes = document.getElementById('notes').value;
+                const total = parseFloat(document.getElementById('total-amount').value.replace('R', '').trim());
+
+                if (!hours || hours < 1 || hours > 160) throw new Error('Invalid hours worked.');
+                if (!module) throw new Error('Please select a module.');
+                if (!period) throw new Error('Please select a claim period.');
+
+                const claimId = 'CLAIM_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+                const newClaim = {
+                    Id: claimId,
+                    LecturerId: document.getElementById('employee-id').value,
+                    Module: module,
+                    HoursWorked: hours,
+                    HourlyRate: 350.00,
+                    Amount: total,
+                    Status: 0, // Pending
+                    SubmitDate: new Date().toISOString(),
+                    Notes: notes,
+                    Documents: uploadedFiles.map(f => ({ name: f.name, content: f.content })),
+                    RejectionReason: null
+                };
+
+                claims.push(newClaim);
+                saveClaimsToStorage();
+                updateDashboard();
+                loadViewClaims();
+                resetForm();
+                alert('Claim submitted successfully! Claim ID: ' + claimId.substring(0, 13));
+            } catch (error) {
+                document.getElementById('upload-error').textContent = error.message;
+                document.getElementById('upload-error').classList.add('show');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Submit Claim';
+            }
+        }
+
+        // Update dashboard statistics
+        function updateDashboard() {
+            const pending = claims.filter(c => c.Status === 0).length;
+            const approved = claims.filter(c => c.Status === 2).length;
+            const underReview = claims.filter(c => c.Status === 1).length;
+            document.getElementById('stat-pending').textContent = pending;
+            document.getElementById('stat-approved').textContent = approved;
+            document.getElementById('stat-review').textContent = underReview;
+            const recentActivity = document.getElementById('recent-activity');
+            recentActivity.innerHTML = '';
+            claims.slice(0, 3).forEach(claim => {
+                const statusClass = ['pending', 'underreview', 'approved', 'rejected'][claim.Status];
+                const statusText = ['Pending', 'Under Review', 'Approved', 'Rejected'][claim.Status];
+                const item = document.createElement('div');
+                item.className = 'list-group-item d-flex justify-content-between align-items-center';
+                item.innerHTML = `
+                    <div><strong>Claim #${claim.Id.substring(0, 8)}</strong> - ${claim.Module}
+                    <br><small class="text-muted">${new Date(claim.SubmitDate).toLocaleString()} - ${claim.HoursWorked} hours</small></div>
+                    <span class="status-badge status-${statusClass}">${statusText}</span>
+                `;
+                recentActivity.appendChild(item);
+            });
+        }
+
+        // Load claims in View Claims section
+        function loadViewClaims() {
+            const container = document.getElementById('claims-list');
+            container.innerHTML = '';
+            const filteredClaims = filterClaimsByStatus();
+            if (filteredClaims.length === 0) {
+                container.innerHTML = '<p class="text-center text-muted">No claims found.</p>';
+                return;
+            }
+            filteredClaims.forEach(claim => {
+                const statusClass = ['pending', 'underreview', 'approved', 'rejected'][claim.Status];
+                const statusText = ['Pending', 'Under Review', 'Approved', 'Rejected'][claim.Status];
+                const progressWidth = [33, 66, 100, 0][claim.Status];
+                const card = document.createElement('div');
+                card.className = 'claim-card card';
+                card.setAttribute('data-status', statusClass);
+                card.setAttribute('data-claim-id', claim.Id);
+                card.innerHTML = `
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-3"><h5 class="mb-1">${claim.Id.substring(0, 13)}</h5><small class="text-muted">${new Date(claim.SubmitDate).toLocaleString()}</small></div>
+                            <div class="col-md-2"><strong>${claim.HoursWorked} Hours</strong></div>
+                            <div class="col-md-2"><strong>R ${claim.Amount.toFixed(2)}</strong></div>
+                            <div class="col-md-3">
+                                <span class="status-badge status-${statusClass}">${statusText}</span>
+                                <div class="progress-tracker mt-2">
+                                    <div class="progress-step ${claim.Status >= 0 ? 'completed' : ''}"><i class="fas fa-check"></i></div>
+                                    <div class="progress-step ${claim.Status >= 1 ? (claim.Status === 1 ? 'active' : 'completed') : ''}"><i class="fas fa-eye"></i></div>
+                                    <div class="progress-step ${claim.Status === 2 ? 'completed' : ''}"><i class="fas fa-check-circle"></i></div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>Quick Actions</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="d-grid gap-2">
-                                <button class="btn btn-outline-success">Bulk Approve Selected</button>
-                                <button class="btn btn-outline-primary">Export Approval Report</button>
+                            <div class="col-md-2">
+                                ${claim.Status === 2 ? '<button class="btn btn-sm btn-success" onclick="downloadInvoice(\'' + claim.Id + '\')">Download Invoice</button>' : '<button class="btn btn-sm btn-outline-primary" onclick="viewClaimDetails(\'' + claim.Id + '\')">View Details</button>'}
                             </div>
                         </div>
+                        ${claim.Documents && claim.Documents.length > 0 ? '<div class="row mt-2"><div class="col-12"><small><i class="fas fa-paperclip"></i> ' + claim.Documents.length + ' document(s) attached (encrypted)</small></div></div>' : ''}
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</main>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Filter claims by status
+        function filterClaimsByStatus() {
+            const filter = document.getElementById('status-filter')?.value || 'all';
+            if (filter === 'all') return claims;
+            const statusMap = { 'pending': 0, 'underreview': 1, 'approved': 2, 'rejected': 3 };
+            return claims.filter(c => c.Status === statusMap[filter]);
+        }
+
+        // Filter claims (called by dropdown)
+        function filterClaims(status) {
+            loadViewClaims();
+        }
+
+        // Search claims
+        function searchClaims() {
+            const searchTerm = document.getElementById('search-claims').value.toLowerCase();
+            const cards = document.querySelectorAll('.claim-card');
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                card.style.display = text.includes(searchTerm) ? 'block' : 'none';
+            });
+        }
+
+        // Load coordinator claims
+        function loadCoordinatorClaims() {
+            const tbody = document.getElementById('coordinator-claims-body');
+            const pendingClaims = claims.filter(c => c.Status === 0);
+            document.getElementById('coord-pending-count').textContent = pendingClaims.length;
+            tbody.innerHTML = '';
+            if (pendingClaims.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center">No pending claims</td></tr>';
+                return;
+            }
+            pendingClaims.forEach(claim => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${claim.Id.substring(0, 13)}</strong></td>
+                    <td>${claim.LecturerId}</td>
+                    <td>${claim.Module}</td>
+                    <td>${claim.HoursWorked}</td>
+                    <td>R ${claim.Amount.toFixed(2)}</td>
+                    <td><span class="status-badge status-pending">Pending</span></td>
+                    <td>${claim.Documents && claim.Documents.length > 0 ? '<i class="fas fa-paperclip text-success"></i> ' + claim.Documents.length + ' file(s)' : '<i class="fas fa-exclamation-triangle text-warning"></i> None'}</td>
+                    <td>
+                        <button class="btn btn-success btn-sm" onclick="verifyClaim('${claim.Id}')"><i class="fas fa-check"></i> Verify</button>
+                        <button class="btn btn-danger btn-sm" onclick="rejectClaim('${claim.Id}', 'coordinator')"><i class="fas fa-times"></i> Reject</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Load manager claims
+        function loadManagerClaims() {
+            const tbody = document.getElementById('manager-claims-body');
+            const underReviewClaims = claims.filter(c => c.Status === 1);
+            document.getElementById('manager-pending-count').textContent = underReviewClaims.length;
+            tbody.innerHTML = '';
+            if (underReviewClaims.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center">No claims under review</td></tr>';
+                return;
+            }
+            underReviewClaims.forEach(claim => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${claim.Id.substring(0, 13)}</strong></td>
+                    <td>${claim.LecturerId}</td>
+                    <td>${claim.Module}</td>
+                    <td>${claim.HoursWorked}</td>
+                    <td>R ${claim.Amount.toFixed(2)}</td>
+                    <td><span class="status-badge status-underreview">Under Review</span></td>
+                    <td>${claim.Documents && claim.Documents.length > 0 ? '<i class="fas fa-paperclip text-success"></i> ' + claim.Documents.length + ' file(s)' : '<i class="fas fa-exclamation-triangle text-warning"></i> None'}</td>
+                    <td>
+                        <button class="btn btn-success btn-sm" onclick="approveClaim('${claim.Id}')"><i class="fas fa-check"></i> Approve</button>
+                        <button class="btn btn-danger btn-sm" onclick="rejectClaim('${claim.Id}', 'manager')"><i class="fas fa-times"></i> Reject</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Verify claim (Coordinator action)
+        function verifyClaim(claimId) {
+            const claim = claims.find(c => c.Id === claimId);
+            if (!claim) return;
+            if (confirm(`Verify claim ${claimId.substring(0, 13)}?`)) {
+                claim.Status = 1;
+                saveClaimsToStorage();
+                updateDashboard();
+                loadCoordinatorClaims();
+                loadViewClaims();
+                alert(`Claim ${claimId.substring(0, 13)} verified and moved to Under Review.`);
+            }
+        }
+
+        // Approve claim (Manager action)
+        function approveClaim(claimId) {
+            const claim = claims.find(c => c.Id === claimId);
+            if (!claim) return;
+            if (confirm(`Approve claim ${claimId.substring(0, 13)}?`)) {
+                claim.Status = 2;
+                saveClaimsToStorage();
+                updateDashboard();
+                loadManagerClaims();
+                loadViewClaims();
+                alert(`Claim ${claimId.substring(0, 13)} approved successfully!`);
+            }
+        }
+
+        // Reject claim (Coordinator or Manager action)
+        function rejectClaim(claimId, role) {
+            const claim = claims.find(c => c.Id === claimId);
+            if (!claim) return;
+            const reason = prompt(`Enter rejection reason for claim ${claimId.substring(0, 13)}:`);
+            if (reason && reason.trim()) {
+                claim.Status = 3;
+                claim.RejectionReason = reason;
+                saveClaimsToStorage();
+                updateDashboard();
+                if (role === 'coordinator') loadCoordinatorClaims();
+                else loadManagerClaims();
+                loadViewClaims();
+                alert(`Claim ${claimId.substring(0, 13)} rejected.`);
+            }
+        }
+
+        // View claim details
+        function viewClaimDetails(claimId) {
+            const claim = claims.find(c => c.Id === claimId);
+            if (!claim) return;
+            const statusText = ['Pending', 'Under Review', 'Approved', 'Rejected'][claim.Status];
+            let details = `
+                Claim Details:
+                ===============
+                ID: ${claim.Id}
+                Lecturer: ${claim.LecturerId}
+                Module: ${claim.Module}
+                Hours: ${claim.HoursWorked}
+                Rate: R${claim.HourlyRate}
+                Amount: R${claim.Amount.toFixed(2)}
+                Status: ${statusText}
+                Submitted: ${new Date(claim.SubmitDate).toLocaleString()}
+                Notes: ${claim.Notes || 'None'}
+                Documents: ${claim.Documents ? claim.Documents.length : 0} file(s)
+            `;
+            if (claim.RejectionReason) details += `\nRejection Reason: ${claim.RejectionReason}`;
+            alert(details);
+        }
+
+        // Download invoice
+        function downloadInvoice(claimId) {
+            const claim = claims.find(c => c.Id === claimId);
+            if (!claim || claim.Status !== 2) {
+                alert('Invoice only available for approved claims.');
+                return;
+            }
+            alert(`Invoice for claim ${claimId.substring(0, 13)} would be downloaded.\n\nAmount: R${claim.Amount.toFixed(2)}`);
+        }
+
+        // Export report
+        function exportReport() {
+            const report = {
+                generatedDate: new Date().toISOString(),
+                totalClaims: claims.length,
+                pending: claims.filter(c => c.Status === 0).length,
+                underReview: claims.filter(c => c.Status === 1).length,
+                approved: claims.filter(c => c.Status === 2).length,
+                rejected: claims.filter(c => c.Status === 3).length,
+                totalAmount: claims.reduce((sum, c) => sum + c.Amount, 0),
+                claims: claims
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(report, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "claims_report_" + new Date().toISOString().split('T')[0] + ".json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            alert('Report exported successfully!');
+        }
+
+        // Prevent form double submission and trigger submit
+        document.getElementById('claimForm').addEventListener('submit', submitClaim);
+
+        // Auto-save form data
+        setInterval(() => {
+            const formData = {
+                hoursWorked: document.getElementById('hours-worked')?.value,
+                module: document.getElementById('module')?.value,
+                notes: document.getElementById('notes')?.value
+            };
+            sessionStorage.setItem('cmcs_draft', JSON.stringify(formData));
+        }, 30000);
+
+        // Restore draft on page load
+        window.addEventListener('load', () => {
+            const draft = sessionStorage.getItem('cmcs_draft');
+            if (draft) {
+                try {
+                    const data = JSON.parse(draft);
+                    if (data.hoursWorked) {
+                        document.getElementById('hours-worked').value = data.hoursWorked;
+                        calculateTotal();
+                    }
+                    if (data.module) document.getElementById('module').value = data.module;
+                    if (data.notes) {
+                        document.getElementById('notes').value = data.notes;
+                        updateCharCount();
+                    }
+                } catch (e) {
+                    console.error('Error restoring draft:', e);
+                }
+            }
+        });
+
+        // Unit Testing Framework
+        const tests = {
+            results: [],
+            test(name, fn) {
+                try { fn(); this.results.push({ name, status: 'PASS' }); console.log(`✓ ${name}`); }
+                catch (error) { this.results.push({ name, status: 'FAIL', error: error.message }); console.error(`✗ ${name}: ${error.message}`); }
+            },
+            assert(condition, message) { if (!condition) throw new Error(message); },
+            assertEqual(actual, expected, message) { if (actual !== expected) throw new Error(message || `Expected ${expected} but got ${actual}`); },
+            runAll() {
+                console.log('\n========== UNIT TESTS ==========\n');
+                this.test('calculateTotal() with valid hours', () => {
+                    document.getElementById('hours-worked').value = '40';
+                    calculateTotal();
+                    this.assertEqual(document.getElementById('total-amount').value, 'R 14000.00', 'Total should be R 14000.00');
+                });
+                this.test('calculateTotal() with invalid hours', () => {
+                    document.getElementById('hours-worked').value = '200';
+                    calculateTotal();
+                    this.assert(document.getElementById('hours-error').classList.contains('show'), 'Error should be displayed for hours > 160');
+                });
+                this.test('handleFileUpload() with valid file', () => {
+                    const mockFile = new File(['test'], 'test.pdf', { type: 'application/pdf' });
+                    Object.defineProperty(mockFile, 'size', { value: 1024 * 1024 });
+                    handleFileUpload({ target: { files: [mockFile] } });
+                    this.assert(uploadedFiles.length > 0, 'Valid file should be uploaded');
+                });
+                this.test('handleFileUpload() with invalid file size', () => {
+                    const mockFile = new File(['test'], 'large.pdf', { type: 'application/pdf' });
+                    Object.defineProperty(mockFile, 'size', { value: 6 * 1024 * 1024 });
+                    handleFileUpload({ target: { files: [mockFile] } });
+                    this.assert(document.getElementById('upload-error').classList.contains('show'), 'Error should be shown for file > 5MB');
+                });
+                this.test('submitClaim() with valid data', () => {
+                    document.getElementById('hours-worked').value = '10';
+                    document.getElementById('module').value = 'PROG6212';
+                    document.getElementById('claim-period').value = '2025-10';
+                    const event = new Event('submit');
+                    submitClaim(event);
+                    this.assert(claims.length > 0, 'Claim should be submitted');
+                });
+                console.log('\n========== TEST SUMMARY ==========');
+                console.log(`Total: ${this.results.length}`);
+                console.log(`Passed: ${this.results.filter(r => r.status === 'PASS').length}`);
+                console.log(`Failed: ${this.results.filter(r => r.status === 'FAIL').length}`);
+                console.log('==================================\n');
+            }
+        };
+        setTimeout(() => tests.runAll(), 2000);
+    </script>
+</body>
+</html>
