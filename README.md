@@ -1,6 +1,10 @@
 PROG6212 POE Part 2: Contract Monthly Claim System (CMCS) Prototype
 This repository contains the final source code and updated documentation for the Part 2 submission of the Programming 2B (PROG6212) Portfolio of Evidence (POE).
 
+Youtube link: https://youtu.be/Qm51ov6KOl4
+github link: https://github.com/MJVCaccount/PROG6212_POE_2025
+ 
+
 Documentation
 Architecture and Data Persistence Strategy
 The application is built on the ASP.NET Core MVC framework, chosen for its separation of concerns (Models, Views, Controllers), promoting maintainable and scalable web-based code (Troelsen & Japikse, 2022). This cross-platform approach ensures remote accessibility for lecturers and managers.
