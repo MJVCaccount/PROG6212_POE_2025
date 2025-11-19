@@ -1,9 +1,14 @@
-﻿using Contract_Monthly_Claim_System.Models; // Explicitly qualify Claim
+﻿using Contract_Monthly_Claim_System.Models;
 using Contract_Monthly_Claim_System.Services;
+using Contract_Monthly_Claim_System.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace Contract_Monthly_Claim_System.Controllers
 {
@@ -11,57 +16,72 @@ namespace Contract_Monthly_Claim_System.Controllers
     {
         private readonly ClaimService _claimService;
         private readonly EncryptionService _encryptionService;
+        private readonly AppDbContext _context;
 
-        public ClaimController(ClaimService claimService, EncryptionService encryptionService)
+        public ClaimController(ClaimService claimService, EncryptionService encryptionService, AppDbContext context)
         {
             _claimService = claimService;
             _encryptionService = encryptionService;
+            _context = context;
         }
 
-        // Submit Claim GET
+        // --- LECTURER VIEW ---
+
         [HttpGet]
         public IActionResult Submit()
         {
-            var model = new Contract_Monthly_Claim_System.Models.Claim { LecturerId = "IIE2024001", HourlyRate = 350.00m };
+            // 1. Get the logged-in Lecturer ID from Session
+            var lecturerId = HttpContext.Session.GetString("LecturerId");
+
+            // Redirect to Login if session is expired or missing
+            if (string.IsNullOrEmpty(lecturerId))
+                return RedirectToAction("Login", "Account");
+
+            // 2. AUTOMATION: Fetch the rate from the DB
+            var lecturer = _context.Lecturers.Find(lecturerId);
+
+            // Safety check: If lecturer not found, return to home or error page
+            if (lecturer == null) return RedirectToAction("Index", "Home");
+
+            // 3. Pre-fill the model. Rate is now automated, not manual.
+            var model = new Claim
+            {
+                LecturerId = lecturer.LecturerId,
+                HourlyRate = lecturer.HourlyRate
+            };
+
             return View(model);
         }
 
-        // Submit Claim POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Submit(Contract_Monthly_Claim_System.Models.Claim model, List<IFormFile> Documents)
+        public async Task<IActionResult> Submit(Claim model, List<IFormFile> Documents)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
+            if (!ModelState.IsValid) return View(model);
 
             try
             {
                 model.Id = Guid.NewGuid().ToString();
                 model.Status = ClaimStatus.Pending;
                 model.SubmitDate = DateTime.Now;
-                model.Amount = (decimal)model.HoursWorked * model.HourlyRate; // Cast double to decimal
 
+                // AUTOMATION: Calculate Amount on Server to prevent tampering
+                model.Amount = (decimal)model.HoursWorked * model.HourlyRate;
+
+                // File Handling Loop
                 foreach (var file in Documents)
                 {
                     if (file != null && file.Length > 0)
                     {
-                        if (file.Length > 5 * 1024 * 1024) // 5MB limit
+                        if (file.Length > 5 * 1024 * 1024) // 5MB Limit
                         {
                             ModelState.AddModelError("Documents", "File too large (max 5MB).");
                             return View(model);
                         }
 
-                        var ext = Path.GetExtension(file.FileName).ToLower();
-                        if (ext != ".pdf" && ext != ".docx" && ext != ".xlsx")
-                        {
-                            ModelState.AddModelError("Documents", "Invalid file type (only .pdf, .docx, .xlsx).");
-                            return View(model);
-                        }
-
                         using var stream = file.OpenReadStream();
                         var encrypted = await _encryptionService.EncryptAsync(stream);
+
                         var doc = new SupportingDocument
                         {
                             Id = Guid.NewGuid().ToString(),
@@ -73,79 +93,110 @@ namespace Contract_Monthly_Claim_System.Controllers
                     }
                 }
 
-                _claimService.AddClaim(model);
+                // Save to Database using Context directly for Part 3
+                _context.Claims.Add(model);
+                await _context.SaveChangesAsync();
+
                 TempData["Success"] = "Claim submitted successfully.";
                 return RedirectToAction("ViewClaims");
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", $"Error submitting claim: {ex.Message}");
+                ModelState.AddModelError("", $"Error: {ex.Message}");
                 return View(model);
             }
         }
 
-        // View Claims
         public IActionResult ViewClaims()
         {
-            var claims = _claimService.GetAllClaims();
+            // Fix: Include Documents for the view
+            var claims = _context.Claims.Include(c => c.Documents).ToList();
             return View(claims);
         }
 
-        // Coordinator Approve GET
+        // --- COORDINATOR / MANAGER VIEW ---
+
         public IActionResult CoordinatorApprove()
         {
-            var pending = _claimService.GetClaimsByStatus(ClaimStatus.Pending);
+            var pending = _context.Claims
+                .Where(c => c.Status == ClaimStatus.Pending)
+                .Include(c => c.Documents) // Ensure docs are loaded
+                .ToList();
             return View(pending);
         }
 
-        // Coordinator Verify POST
         [HttpPost]
         public IActionResult Verify(string id)
         {
-            _claimService.UpdateStatus(id, ClaimStatus.UnderReview);
-            TempData["Success"] = "Claim verified and moved to under review.";
+            var claim = _context.Claims.Find(id);
+            if (claim == null) return NotFound();
+
+            // AUTOMATION: Verification Logic
+            bool isHoursExcessive = claim.HoursWorked > 100;
+
+            // Fix Dynamic Error: Extract variables before LINQ usage
+            var lecId = claim.LecturerId;
+            var rate = claim.HourlyRate;
+
+            // Check if the submitted rate matches the official HR contract rate
+            bool isRateValid = _context.Lecturers.Any(l => l.LecturerId == lecId && l.HourlyRate == rate);
+
+            if (isHoursExcessive)
+                claim.Notes += " [SYSTEM FLAG: Hours exceeded limit]";
+
+            if (!isRateValid)
+                claim.Notes += " [SYSTEM FLAG: Rate mismatch detected]";
+
+            claim.Status = ClaimStatus.UnderReview;
+            _context.SaveChanges();
+
+            // FIX: Added missing return statement
             return RedirectToAction("CoordinatorApprove");
         }
 
-        // Coordinator Reject POST
         [HttpPost]
         public IActionResult RejectCoordinator(string id)
         {
-            _claimService.UpdateStatus(id, ClaimStatus.Rejected);
-            TempData["Success"] = "Claim rejected.";
+            UpdateStatus(id, ClaimStatus.Rejected);
             return RedirectToAction("CoordinatorApprove");
         }
 
-        // Manager Approve GET
         public IActionResult ManagerApprove()
         {
-            var underReview = _claimService.GetClaimsByStatus(ClaimStatus.UnderReview);
+            var underReview = _context.Claims.Where(c => c.Status == ClaimStatus.UnderReview).ToList();
             return View(underReview);
         }
 
-        // Manager Approve POST
         [HttpPost]
         public IActionResult Approve(string id)
         {
-            _claimService.UpdateStatus(id, ClaimStatus.Approved);
-            TempData["Success"] = "Claim approved.";
+            UpdateStatus(id, ClaimStatus.Approved);
             return RedirectToAction("ManagerApprove");
         }
 
-        // Manager Reject POST
         [HttpPost]
         public IActionResult RejectManager(string id)
         {
-            _claimService.UpdateStatus(id, ClaimStatus.Rejected);
-            TempData["Success"] = "Claim rejected.";
+            UpdateStatus(id, ClaimStatus.Rejected);
             return RedirectToAction("ManagerApprove");
         }
 
-        // Download Document
+        // Helper to avoid repeating code
+        private void UpdateStatus(string id, ClaimStatus status)
+        {
+            var claim = _context.Claims.Find(id);
+            if (claim != null)
+            {
+                claim.Status = status;
+                _context.SaveChanges();
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> DownloadDocument(string docId)
         {
-            var doc = _claimService.GetAllClaims().SelectMany(c => c.Documents).FirstOrDefault(d => d.Id == docId);
+            // Search in DB directly
+            var doc = _context.SupportingDocuments.FirstOrDefault(d => d.Id == docId);
             if (doc == null) return NotFound();
 
             try
