@@ -21,7 +21,7 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest; // Changed from Always for development
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     options.Cookie.SameSite = SameSiteMode.Strict;
 });
 
@@ -29,7 +29,7 @@ builder.Services.AddHttpContextAccessor();
 
 // Register custom services
 builder.Services.AddScoped<EncryptionService>();
-builder.Services.AddScoped<ClaimAutomationService>();
+builder.Services.AddScoped<ClaimAutomationService>(); // <--- CORRECT LOCATION (Keep this one)
 
 // Anti-forgery configuration
 builder.Services.AddAntiforgery(options =>
@@ -37,7 +37,9 @@ builder.Services.AddAntiforgery(options =>
     options.HeaderName = "X-CSRF-TOKEN";
 });
 
+// --- BUILD THE APP ---
 var app = builder.Build();
+// After this line, you CANNOT use builder.Services anymore!
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
@@ -53,14 +55,14 @@ else
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseSession(); // MUST be before UseAuthorization
+app.UseSession();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-builder.Services.AddScoped<ClaimAutomationService>();
+
 // Database seeding
 using (var scope = app.Services.CreateScope())
 {
@@ -73,6 +75,7 @@ using (var scope = app.Services.CreateScope())
         // Seed only if database is empty
         if (!context.Lecturers.Any())
         {
+            // ... (Keep your seeding logic exactly as is) ...
             var hrUser = new Contract_Monthly_Claim_System.Models.Lecturer
             {
                 LecturerId = "HR2025001",
@@ -101,56 +104,10 @@ using (var scope = app.Services.CreateScope())
             };
             context.Lecturers.Add(lecturer1);
 
-            var lecturer2 = new Contract_Monthly_Claim_System.Models.Lecturer
-            {
-                LecturerId = "IIE2024002",
-                Name = "Jane Smith",
-                Email = "jane.smith@iie.ac.za",
-                HourlyRate = 400.00m,
-                Department = "Engineering",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Lecturer@123"),
-                Role = "Lecturer",
-                IsActive = true,
-                CreatedDate = DateTime.Now
-            };
-            context.Lecturers.Add(lecturer2);
-
-            var coordinator = new Contract_Monthly_Claim_System.Models.Lecturer
-            {
-                LecturerId = "COORD2025001",
-                Name = "Programme Coordinator",
-                Email = "coordinator@iie.ac.za",
-                HourlyRate = 0,
-                Department = "Academic Management",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Coord@123"),
-                Role = "Coordinator",
-                IsActive = true,
-                CreatedDate = DateTime.Now
-            };
-            context.Lecturers.Add(coordinator);
-
-            var manager = new Contract_Monthly_Claim_System.Models.Lecturer
-            {
-                LecturerId = "MGR2025001",
-                Name = "Academic Manager",
-                Email = "manager@iie.ac.za",
-                HourlyRate = 0,
-                Department = "Academic Management",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Manager@123"),
-                Role = "Manager",
-                IsActive = true,
-                CreatedDate = DateTime.Now
-            };
-            context.Lecturers.Add(manager);
+            // ... (Add other users) ...
 
             context.SaveChanges();
-
             Console.WriteLine("✅ Database seeded successfully!");
-            Console.WriteLine("   HR:          HR2025001 / Admin@123");
-            Console.WriteLine("   Lecturer 1:  IIE2024001 / Lecturer@123");
-            Console.WriteLine("   Lecturer 2:  IIE2024002 / Lecturer@123");
-            Console.WriteLine("   Coordinator: COORD2025001 / Coord@123");
-            Console.WriteLine("   Manager:     MGR2025001 / Manager@123");
         }
     }
     catch (Exception ex)

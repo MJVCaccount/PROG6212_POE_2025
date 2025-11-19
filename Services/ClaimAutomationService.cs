@@ -3,6 +3,7 @@ using Contract_Monthly_Claim_System.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Contract_Monthly_Claim_System.Services
@@ -27,7 +28,7 @@ namespace Contract_Monthly_Claim_System.Services
         {
             var result = new ValidationResult { IsValid = true };
 
-            // Rule: Check for overlapping claims or duplicate periods for this lecturer
+            // Rule: Check for duplicate claims for the same period
             var existingClaim = await _context.Claims
                 .FirstOrDefaultAsync(c => c.LecturerId == claim.LecturerId
                                        && c.ClaimPeriod == claim.ClaimPeriod
@@ -80,6 +81,41 @@ namespace Contract_Monthly_Claim_System.Services
             await _context.SaveChangesAsync();
 
             return result;
+        }
+
+        // AUTOMATION 4: Generate Payment Report (Fixed Missing Method)
+        public async Task<PaymentReportViewModel> GeneratePaymentReportAsync(DateTime startDate, DateTime endDate)
+        {
+            // Fetch all approved claims within the date range
+            var approvedClaims = await _context.Claims
+                .Include(c => c.Lecturer)
+                .Where(c => c.Status == ClaimStatus.Approved &&
+                            c.SubmitDate >= startDate &&
+                            c.SubmitDate <= endDate)
+                .ToListAsync();
+
+            // Build the report using LINQ aggregation
+            var report = new PaymentReportViewModel
+            {
+                GeneratedDate = DateTime.Now,
+                StartDate = startDate,
+                EndDate = endDate,
+                TotalClaims = approvedClaims.Count,
+                TotalAmount = approvedClaims.Sum(c => c.Amount),
+                ClaimBreakdown = approvedClaims
+                    .GroupBy(c => c.LecturerId)
+                    .Select(g => new LecturerPaymentBreakdown
+                    {
+                        LecturerId = g.Key,
+                        LecturerName = g.First().Lecturer?.Name ?? "Unknown",
+                        ClaimCount = g.Count(),
+                        TotalHours = g.Sum(c => c.HoursWorked),
+                        TotalAmount = g.Sum(c => c.Amount)
+                    })
+                    .ToList()
+            };
+
+            return report;
         }
     }
 
