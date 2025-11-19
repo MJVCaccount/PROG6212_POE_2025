@@ -1,105 +1,57 @@
 ﻿@model IEnumerable<Contract_Monthly_Claim_System.Models.Claim>
 @{
-    ViewData["Title"] = "Coordinator Verification";
+    ViewData["Title"] = "Coordinator";
 }
 
 <div class="container py-4">
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <div class="card bg-primary text-white shadow-sm border-0" style="background: linear-gradient(135deg, #0f766e, #115e59);">
-                <div class="card-body d-flex justify-content-between align-items-center p-4">
-                    <div>
-                        <h2 class="fw-bold mb-0">Coordinator Dashboard</h2>
-                        <p class="mb-0 opacity-75">Review and verify pending claims.</p>
-                    </div>
-                    <div class="text-end">
-                        <div class="display-4 fw-bold">@Model.Count()</div>
-                        <div class="small text-uppercase opacity-75">Pending Items</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <h2 class="mb-4">Coordinator Verification</h2>
     <div class="card shadow border-0">
-        <div class="card-header bg-white py-3 border-0">
-            <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-tasks me-2 text-warning"></i>Pending Verification</h5>
-        </div>
         <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="ps-4">Lecturer</th>
-                            <th>Module</th>
-                            <th>Claim Details</th>
-                            <th>System Automation</th>
-                            <th class="text-end pe-4">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            // Automation Logic for View Logic
-                            bool highHours = item.HoursWorked > 100;
-                            bool highAmount = item.Amount > 10000;
-                            bool hasIssues = highHours || highAmount;
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Lecturer</th>
+                        <th>Details</th>
+                        <th>System Automation</th>
+                        <th class="text-end pe-4">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        bool flag = item.HoursWorked > 100 || item.Amount > 10000;
+                        <tr class="@(flag ? "table-warning" : "")">
+                            <td class="ps-4 fw-bold">@item.LecturerId</td>
+                            <td>@item.Module <br /> <small>@item.HoursWorked hrs @@ R @item.HourlyRate</small></td>
+                            <td>
+                                @if (flag)
+                                {
+                                    <span class="badge bg-danger">Auto-Flagged</span>
+                                }
+                                else
+                                {
 
-                            <tr class="@(hasIssues ? "table-warning" : "")">
-                                <td class="ps-4">
-                                    <div class="fw-bold">@item.LecturerId</div> <small class="text-muted">@item.SubmitDate.ToString("MMM dd")</small>
-                                </td>
-                                <td>@item.Module</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <span class="me-2">@item.HoursWorked hrs</span>
-                                        <span class="text-muted small">(R @item.Amount.ToString("N0"))</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    @if (!hasIssues)
-                                    {
-                                        <span class="badge bg-success rounded-pill">
-                                            <i class="fas fa-check-circle me-1"></i> Auto-Pass
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        if (highHours)
-                                        {
-                                            <span class="auto-flag me-1"><i class="fas fa-clock me-1"></i>High Hours</span>
-                                        }
-                                        if (highAmount)
-                                        {
-                                            <span class="auto-flag"><i class="fas fa-coins me-1"></i>High Value</span>
-                                        }
-                                    }
-                                </td>
-                                <td class="text-end pe-4">
-                                    <div class="btn-group">
-                                        <form asp-action="Verify" method="post">
-                                            <input type="hidden" name="id" value="@item.Id" />
-                                            <button type="submit" class="btn btn-sm btn-success" title="Verify">
-                                                <i class="fas fa-check"></i> Verify
-                                            </button>
-                                        </form>
-                                        <form asp-action="RejectCoordinator" method="post" class="ms-1">
-                                            <input type="hidden" name="id" value="@item.Id" />
-                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Reject">
-                                                <i class="fas fa-times"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                        @if (!Model.Any())
-                        {
-                            <tr><td colspan="5" class="text-center py-4 text-muted">All caught up! No pending claims.</td></tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                                    <span class="badge bg-success">Auto-Pass</span>
+                                }
+                            </td>
+                            <td class="text-end pe-4">
+                                <form asp-action="Verify" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button class="btn btn-success btn-sm">Verify</button>
+                                </form>
+                                <form asp-action="RejectCoordinator" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button class="btn btn-outline-danger btn-sm">Reject</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr><td colspan="4" class="text-center py-4">No pending claims.</td></tr>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
