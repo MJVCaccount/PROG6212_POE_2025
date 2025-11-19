@@ -123,6 +123,16 @@ namespace Contract_Monthly_Claim_System.Services
     }
 
     // Helper Classes
-    public class ValidationResult { public bool IsValid { get; set; } public List<string> Errors { get; set; } = new List<string>(); }
-    public class VerificationResult { public bool Success { get; set; } public bool RequiresManagerReview { get; set; } public string Message { get; set; } }
+    public class ValidationResult
+    {
+        public bool IsValid { get; set; }
+        public List<string> Errors { get; set; } = new List<string>();
+    }
+
+    public class VerificationResult
+    {
+        public bool Success { get; set; }
+        public bool RequiresManagerReview { get; set; }
+        public string Message { get; set; }
+    }
 }
