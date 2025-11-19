@@ -16,6 +16,15 @@ namespace Contract_Monthly_Claim_System.Models
         /// Generated using GUID to ensure uniqueness across distributed systems.
         /// </summary>
         [Key]
+
+        [Required(ErrorMessage = "Claim period is required")]
+        [MaxLength(7)]
+        public string ClaimPeriod { get; set; }
+
+        public DateTime? LastUpdated { get; set; }
+
+        [MaxLength(50)]
+        public string LastModifiedBy { get; set; }
         public string Id { get; set; }
 
         /// <summary>
