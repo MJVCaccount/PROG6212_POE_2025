@@ -1,0 +1,60 @@
+﻿@model IEnumerable<Contract_Monthly_Claim_System.Models.Claim>
+@{
+    ViewData["Title"] = "System Audit Log";
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold"><i class="fas fa-history me-2"></i>System Audit Log</h2>
+        <span class="badge bg-secondary">Last 100 Transactions</span>
+    </div>
+
+    <div class="card shadow border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Time</th>
+                            <th>Claim ID</th>
+                            <th>Lecturer</th>
+                            <th>Action / Status</th>
+                            <th>Modified By</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.LastUpdated?.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td class="font-monospace small">@item.Id.Substring(0, 8)...</td>
+                                <td>@item.Lecturer?.Name</td>
+                                <td>
+                                    @if (item.Status == Contract_Monthly_Claim_System.Models.ClaimStatus.Approved)
+                                    {
+                                        <span class="badge bg-success">Approved</span>
+                                    }
+                                    else if (item.Status == Contract_Monthly_Claim_System.Models.ClaimStatus.Rejected)
+                                    {
+                                        <span class="badge bg-danger">Rejected</span>
+                                    }
+                                    else if (item.Status == Contract_Monthly_Claim_System.Models.ClaimStatus.UnderReview)
+                                    {
+                                        <span class="badge bg-warning text-dark">Verified</span>
+                                    }
+                                </td>
+                                <td>@(item.LastModifiedBy ?? "System")</td>
+                                <td class="small text-muted">
+                                    <span class="d-inline-block text-truncate" style="max-width: 200px;" title="@item.Notes">
+                                        @item.Notes
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
