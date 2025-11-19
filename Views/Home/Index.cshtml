@@ -3,1149 +3,254 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contract Monthly Claim System - IIE</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <style>
-        :root {
-            --primary-teal: #006D77;
-            --secondary-teal: #83C5BE;
-            --accent-coral: #FF6F61;
-            --background-offwhite: #F9F7F7;
-            --text-darkgray: #2E2E2E;
-            --success-green: #27AE60;
-            --warning-yellow: #F4A261;
-            --danger-red: #E63946;
-            --info-blue: #4A90E2;
-        }
+<div class="container py-4">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-1">
+                <i class="fas fa-tachometer-alt me-2 text-primary"></i>
+                Dashboard Overview
+            </h2>
+            <p class="text-muted mb-0">
+                Welcome back, <strong>@ViewBag.UserName</strong>!
+                Here is your monthly summary.
+            </p>
+        </div>
+        <div>
+            <a asp-controller="Claim" asp-action="Submit" class="btn btn-primary btn-lg shadow-sm">
+                <i class="fas fa-plus-circle me-2"></i>New Claim
+            </a>
+        </div>
+    </div>
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--background-offwhite);
-        }
-
-        .header {
-            background: linear-gradient(135deg, var(--primary-teal) 0%, var(--secondary-teal) 100%);
-            color: var(--background-offwhite);
-            padding: 20px 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .navbar {
-            background-color: var(--accent-coral);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            padding: 15px 0;
-        }
-
-            .navbar .nav-link {
-                color: var(--primary-teal);
-                font-weight: 500;
-                padding: 10px 20px;
-                transition: all 0.3s ease;
-            }
-
-                .navbar .nav-link:hover,
-                .navbar .nav-link.active {
-                    background-color: var(--primary-teal);
-                    color: var(--background-offwhite);
-                    border-radius: 5px;
-                }
-
-        .content-container {
-            background: var(--background-offwhite);
-            border-radius: 10px;
-            padding: 30px;
-            margin: 30px auto;
-            max-width: 1400px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-        }
-
-            .content-container.hidden {
-                display: none;
-            }
-
-        .content-header {
-            border-bottom: 3px solid var(--primary-teal);
-            padding-bottom: 15px;
-            margin-bottom: 30px;
-        }
-
-            .content-header h2 {
-                color: var(--primary-teal);
-                font-weight: 600;
-            }
-
-        .stats-card {
-            background: linear-gradient(135deg, var(--primary-teal) 0%, var(--secondary-teal) 100%);
-            color: var(--background-offwhite);
-            padding: 25px;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 10px rgba(0, 109, 119, 0.2);
-            transition: transform 0.3s ease;
-        }
-
-            .stats-card:hover {
-                transform: translateY(-5px);
-            }
-
-        .stats-number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .status-badge {
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: 500;
-            font-size: 0.85rem;
-            display: inline-block;
-        }
-
-        .status-pending {
-            background-color: var(--warning-yellow);
-            color: var(--text-darkgray);
-        }
-
-        .status-underreview {
-            background-color: var(--info-blue);
-            color: var(--background-offwhite);
-        }
-
-        .status-approved {
-            background-color: var(--success-green);
-            color: var(--background-offwhite);
-        }
-
-        .status-rejected {
-            background-color: var(--danger-red);
-            color: var(--background-offwhite);
-        }
-
-        .form-section {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            border-left: 4px solid var(--primary-teal);
-        }
-
-            .form-section h4 {
-                color: var(--primary-teal);
-                margin-bottom: 20px;
-            }
-
-        .btn-primary {
-            background-color: var(--primary-teal);
-            border-color: var(--primary-teal);
-        }
-
-            .btn-primary:hover {
-                background-color: var(--secondary-teal);
-                border-color: var(--secondary-teal);
-            }
-
-        .claim-card {
-            border-left: 4px solid var(--primary-teal);
-            margin-bottom: 15px;
-            transition: all 0.3s ease;
-        }
-
-            .claim-card:hover {
-                box-shadow: 0 4px 15px rgba(0, 109, 119, 0.2);
-            }
-
-        .error-message {
-            color: var(--danger-red);
-            font-size: 0.9rem;
-            margin-top: 5px;
-            display: none;
-        }
-
-            .error-message.show {
-                display: block;
-            }
-
-        .success-message {
-            color: var(--success-green);
-            font-size: 0.9rem;
-            margin-top: 5px;
-            display: none;
-        }
-
-            .success-message.show {
-                display: block;
-            }
-
-        .uploaded-file-item {
-            background: #e9ecef;
-            padding: 8px 12px;
-            border-radius: 5px;
-            margin: 5px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-            .uploaded-file-item .remove-btn {
-                color: var(--danger-red);
-                cursor: pointer;
-                font-weight: bold;
-            }
-
-        .footer {
-            background-color: var(--primary-teal);
-            color: var(--background-offwhite);
-            text-align: center;
-            padding: 20px 0;
-            margin-top: 50px;
-        }
-
-        .table-dark {
-            background-color: var(--primary-teal);
-        }
-
-        .encrypted-badge {
-            background-color: #6c757d;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 3px;
-            font-size: 0.75rem;
-            margin-left: 5px;
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <h3><i class="fas fa-university me-2"></i>Contract Monthly Claim System</h3>
-                    <p class="mb-0">Independent Institute of Education</p>
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-5">
+        <!-- Pending Claims Card -->
+        <div class="col-md-3">
+            <div class="stats-card border-start-warning">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stats-number text-warning">@Model.PendingClaims</div>
+                        <div class="stats-label">Pending Claims</div>
+                    </div>
+                    <div class="stats-icon bg-warning bg-opacity-10 text-warning">
+                        <i class="fas fa-clock fa-2x"></i>
+                    </div>
                 </div>
-                <div class="col-md-6 text-end">
-                    <small>Logged in as: <strong>@Model.RecentClaims.FirstOrDefault()?.LecturerId ?? "IIE2024001"</strong></small>
+            </div>
+        </div>
+
+        <!-- Under Review Card -->
+        <div class="col-md-3">
+            <div class="stats-card border-start-info">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stats-number text-info">@Model.UnderReviewClaims</div>
+                        <div class="stats-label">Under Review</div>
+                    </div>
+                    <div class="stats-icon bg-info bg-opacity-10 text-info">
+                        <i class="fas fa-search fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Approved Claims Card -->
+        <div class="col-md-3">
+            <div class="stats-card border-start-success">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stats-number text-success">@Model.ApprovedClaims</div>
+                        <div class="stats-label">Approved</div>
+                    </div>
+                    <div class="stats-icon bg-success bg-opacity-10 text-success">
+                        <i class="fas fa-check-circle fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Earnings Card -->
+        <div class="col-md-3">
+            <div class="stats-card border-start-primary">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stats-number text-primary">R @Model.TotalEarnings.ToString("N2")</div>
+                        <div class="stats-label">Total Earnings</div>
+                    </div>
+                    <div class="stats-icon bg-primary bg-opacity-10 text-primary">
+                        <i class="fas fa-money-bill-wave fa-2x"></i>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <nav class="navbar navbar-expand-lg">
-        <div class="container">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto">
-                    <li class="nav-item"><a class="nav-link active" href="#" onclick="showSection('dashboard')"><i class="fas fa-home me-1"></i>Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('submit-claim')"><i class="fas fa-plus-circle me-1"></i>Submit Claim</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('view-claims')"><i class="fas fa-list me-1"></i>My Claims</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('coordinator-view')"><i class="fas fa-user-check me-1"></i>Coordinator</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('manager-view')"><i class="fas fa-user-tie me-1"></i>Manager</a></li>
-                </ul>
-            </div>
+    <!-- Recent Activity Section -->
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold">
+                <i class="fas fa-history me-2 text-primary"></i>
+                Recent Claims
+            </h5>
+            <a asp-controller="Claim" asp-action="ViewClaims" class="btn btn-sm btn-outline-primary">
+                View All <i class="fas fa-arrow-right ms-1"></i>
+            </a>
         </div>
-    </nav>
-
-    <main class="container">
-        <div id="dashboard" class="content-container active-section">
-            <div class="content-header">
-                <h2><i class="fas fa-tachometer-alt me-2"></i>Dashboard Overview</h2>
-                <p class="mb-0">Welcome to your Contract Monthly Claim System dashboard</p>
-            </div>
-            <div class="content-body">
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="stats-card">
-                            <div class="stats-number" id="stat-pending">@Model.PendingClaims</div>
-                            <div>Pending Claims</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="stats-card">
-                            <div class="stats-number" id="stat-approved">@Model.ApprovedClaims</div>
-                            <div>Approved Claims</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="stats-card">
-                            <div class="stats-number" id="stat-review">@Model.UnderReviewClaims</div>
-                            <div>Under Review</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="stats-card">
-                            <div class="stats-number" id="stat-total-earnings">R @Model.TotalEarnings.ToString("N2")</div>
-                            <div>Total Earnings</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row mt-4">
-                    <div class="col-md-8">
-                        <h4><i class="fas fa-clock me-2"></i>Recent Activity</h4>
-                        <div class="list-group" id="recent-activity">
-                            @* Initial content is kept but will be overwritten by JS when claims are submitted/updated *@
-                            @foreach (var claim in Model.RecentClaims)
-                            {
-                                <div class="list-group-item d-flex justify-content-between align-items-center claim-card">
-                                    <div>
-                                        <strong>Claim #@claim.Id.Substring(0, 8)</strong> - @claim.Module
-                                        <br><small class="text-muted">@claim.SubmitDate.ToString("MMM dd, yyyy HH:mm") - @claim.HoursWorked hours worked</small>
-                                    </div>
-                                    <span class="status-badge status-@claim.Status.ToString().ToLower()">@claim.Status</span>
-                                </div>
-                            }
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <h4><i class="fas fa-calendar me-2"></i>Quick Actions</h4>
-                        <div class="d-grid gap-2">
-                            <button class="btn btn-primary" onclick="showSection('submit-claim')">
-                                <i class="fas fa-plus me-2"></i>Submit New Claim
-                            </button>
-                            <button class="btn btn-outline-primary" onclick="exportReport()">
-                                <i class="fas fa-download me-2"></i>Export Report
-                            </button>
-                            <button class="btn btn-outline-primary" onclick="showSection('view-claims')">
-                                <i class="fas fa-eye me-2"></i>View All Claims
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="submit-claim" class="content-container hidden">
-            <div class="content-header">
-                <h2><i class="fas fa-plus-circle me-2"></i>Submit Monthly Claim</h2>
-                <p class="mb-0">Complete the form below to submit your monthly claim</p>
-            </div>
-            <div class="content-body">
-                <form id="claimForm" action="/Claim/Submit" method="post" enctype="multipart/form-data">
-                    @Html.AntiForgeryToken()
-                    <div class="form-section">
-                        <h4><i class="fas fa-user me-2"></i>Lecturer Information</h4>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label for="lecturer-name" class="form-label">Lecturer Name</label>
-                                <input type="text" id="lecturer-name" class="form-control" value="John Doe" readonly>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="employee-id" class="form-label">Employee ID</label>
-                                <input type="text" id="employee-id" name="LecturerId" class="form-control" value="IIE2024001" readonly>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-section">
-                        <h4><i class="fas fa-calculator me-2"></i>Claim Details</h4>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <label for="hours-worked" class="form-label">Hours Worked <span class="text-danger">*</span></label>
-                                <input type="number" id="hours-worked" name="HoursWorked" class="form-control" placeholder="Enter hours" min="1" max="160" step="0.5" required oninput="calculateTotal()">
-                                <small class="text-muted">Range: 1-160 hours</small>
-                                <div class="error-message" id="hours-error"><i class="fas fa-exclamation-triangle me-1"></i> Hours must be between 1 and 160</div>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="hourly-rate" class="form-label">Hourly Rate (R)</label>
-                                <input type="text" id="hourly-rate" name="HourlyRate" class="form-control" value="350.00" readonly>
-                                <small class="text-muted">Rate: R200-R500</small>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="total-amount" class="form-label">Total Amount</label>
-                                <input type="text" id="total-amount" name="Amount" class="form-control" value="R 0.00" readonly>
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-md-6">
-                                <label for="module" class="form-label">Module/Subject <span class="text-danger">*</span></label>
-                                <select id="module" name="Module" class="form-select" required>
-                                    <option value="">Select Module</option>
-                                    <option value="PROG6212">PROG6212 - Programming 2B</option>
-                                    <option value="DATA6222">DATA6222 - Database Systems</option>
-                                    <option value="WEB6234">WEB6234 - Web Development</option>
-                                </select>
-                                <div class="error-message" id="module-error"><i class="fas fa-exclamation-triangle me-1"></i> Please select a module</div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="claim-period" class="form-label">Month/Period <span class="text-danger">*</span></label>
-                                <input type="month" id="claim-period" name="ClaimPeriod" class="form-control" value="@DateTime.Now.ToString("yyyy-MM")" required>
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-12">
-                                <label for="notes" class="form-label">Additional Notes</label>
-                                <textarea id="notes" name="Notes" class="form-control" rows="3" maxlength="500" placeholder="Add any additional notes (max 500 characters)" oninput="updateCharCount()"></textarea>
-                                <small class="text-muted"><span id="char-count">0</span>/500 characters</small>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-section">
-                        <h4><i class="fas fa-paperclip me-2"></i>Supporting Documents</h4>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label for="documents" class="form-label">Upload Documents</label>
-                                <input type="file" id="documents" name="Documents" class="form-control" multiple accept=".pdf,.docx,.xlsx" onchange="handleFileUpload(event)">
-                                <small class="text-muted">Accepted: .pdf, .docx, .xlsx (max 5MB each) - Files will be encrypted</small>
-                                <div id="upload-error" class="error-message mt-3"><i class="fas fa-exclamation-triangle me-1"></i> File validation error.</div>
-                                <div id="upload-success" class="success-message mt-3"><i class="fas fa-check-circle me-1"></i> Document added successfully.</div>
-                                <div id="uploaded-files" class="mt-3"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary btn-lg mt-3"><i class="fas fa-paper-plane me-2"></i> Submit Claim</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <div id="view-claims" class="content-container hidden">
-            <div class="content-header">
-                <h2><i class="fas fa-list me-2"></i>My Claims</h2>
-                <p class="mb-0">Track the status of your submitted claims</p>
-            </div>
-            <div class="content-body">
+        <div class="card-body p-0">
+            @if (Model.RecentClaims != null && Model.RecentClaims.Any())
+            {
                 <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead class="table-dark">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead class="table-light">
                             <tr>
-                                <th>ID</th>
+                                <th class="ps-4">Date</th>
                                 <th>Module</th>
                                 <th>Hours</th>
                                 <th>Amount</th>
                                 <th>Status</th>
-                                <th>Documents</th>
+                                <th class="pe-4">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="my-claims-table-body">
-                            @* Claims dynamically added here by JS *@
+                        <tbody>
+                            @foreach (var claim in Model.RecentClaims)
+                            {
+                                <tr>
+                                    <td class="ps-4 fw-bold text-muted">
+                                        @claim.SubmitDate.ToString("MMM dd, yyyy")
+                                        <br />
+                                        <small class="text-muted">@claim.SubmitDate.ToString("HH:mm")</small>
+                                    </td>
+                                    <td>
+                                        <strong>@claim.Module</strong>
+                                        <br />
+                                        <small class="text-muted">@claim.ClaimPeriod</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark">
+                                            @claim.HoursWorked hrs
+                                        </span>
+                                    </td>
+                                    <td class="fw-bold text-success">
+                                        R @claim.Amount.ToString("N2")
+                                    </td>
+                                    <td>
+                                        <span class="status-badge status-@claim.Status.ToString()">
+                                            @claim.Status
+                                        </span>
+                                    </td>
+                                    <td class="pe-4">
+                                        <button class="btn btn-sm btn-outline-secondary"
+                                                title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
-                <p id="no-claims-message" class="text-muted text-center mt-5">No claims submitted yet.</p>
-            </div>
-        </div>
-
-        <div id="coordinator-view" class="content-container hidden">
-            <div class="content-header">
-                <h2><i class="fas fa-user-check me-2"></i>Coordinator Claims Approval</h2>
-                <p class="mb-0">Review pending claims for verification</p>
-            </div>
-            <div class="content-body">
-                <h4>Pending Approvals <span class="badge bg-warning" id="coordinator-count">0</span></h4>
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>ID</th>
-                                <th>Lecturer</th>
-                                <th>Module</th>
-                                <th>Hours</th>
-                                <th>Amount</th>
-                                <th>Documents</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="coordinator-table-body">
-                            @* Pending claims are dynamically added here by JS *@
-                        </tbody>
-                    </table>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
+                    <p class="text-muted">
+                        No claims found. Start by submitting your first claim!
+                    </p>
+                    <a asp-controller="Claim" asp-action="Submit" class="btn btn-primary mt-2">
+                        <i class="fas fa-plus me-2"></i>Submit First Claim
+                    </a>
                 </div>
-            </div>
+            }
         </div>
-
-        <div id="manager-view" class="content-container hidden">
-            <div class="content-header">
-                <h2><i class="fas fa-user-tie me-2"></i>Manager Claims Approval</h2>
-                <p class="mb-0">Review verified claims for final approval</p>
-            </div>
-            <div class="content-body">
-                <h4>Under Review <span class="badge bg-info" id="manager-count">0</span></h4>
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>ID</th>
-                                <th>Lecturer</th>
-                                <th>Module</th>
-                                <th>Hours</th>
-                                <th>Amount</th>
-                                <th>Documents</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="manager-table-body">
-                            @* UnderReview claims are dynamically added here by JS *@
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <footer class="footer">
-        <div class="container">
-            &copy; 2025 - Contract Monthly Claim System - IIE
-        </div>
-    </footer>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        // --- GLOBAL DATA (Simulating Database) ---
-        let uploadedFiles = [];
-        const MAX_FILE_SIZE_MB = 5;
-        // Array to store submitted claims in memory
-        const claims = [];
-
-        // --- NAVIGATION & INITIAL RENDERING ---
-        /**
-         * Navigation function. Triggers view rendering for admin sections.
-         */
-        function showSection(sectionId) {
-            document.querySelectorAll('.content-container').forEach(container => container.classList.add('hidden'));
-            const targetSection = document.getElementById(sectionId);
-            if (targetSection) {
-                targetSection.classList.remove('hidden');
-            }
-
-            document.querySelectorAll('.navbar .nav-link').forEach(link => link.classList.remove('active'));
-            const activeLink = document.querySelector(`[onclick="showSection('${sectionId}')"]`);
-            if (activeLink) {
-                 activeLink.classList.add('active');
-            }
-
-            // Trigger rendering for data-driven views when navigating to them
-            if (sectionId === 'view-claims') {
-                renderMyClaimsTable();
-            } else if (sectionId === 'coordinator-view' || sectionId === 'manager-view') {
-                renderAdminViews();
-            }
-        }
-
-        // --- CORE VIEW RENDERING FUNCTIONS ---
-
-        /**
-         * Renders the Recent Activity list. Called by updateDashboardStats().
-         */
-        function renderRecentActivity() {
-            const activityContainer = document.getElementById('recent-activity');
-            activityContainer.innerHTML = ''; // Clear existing list
-
-            // Sort claims by submit date (newest first) and take the top 4
-            const recentClaims = claims.slice().sort((a, b) => new Date(b.submitDate) - new Date(a.submitDate)).slice(0, 4);
-
-            if (recentClaims.length === 0) {
-                activityContainer.innerHTML = '<p class="text-muted text-center">No recent activity.</p>';
-                return;
-            }
-
-            recentClaims.forEach(claim => {
-                const newActivityItem = document.createElement('div');
-                newActivityItem.className = 'list-group-item d-flex justify-content-between align-items-center claim-card';
-                newActivityItem.id = `recent-${claim.id}`;
-
-                newActivityItem.innerHTML = `
-                    <div>
-                        <strong>Claim #${claim.id.substring(0, 8)}</strong> - ${claim.module}
-                        <br><small class="text-muted">${claim.submitDate} - ${claim.hoursWorked} hours worked</small>
-                    </div>
-                    <span class="status-badge status-${claim.status.toLowerCase()}">${claim.status}</span>
-                `;
-                activityContainer.appendChild(newActivityItem);
-            });
-        }
-
-        /**
-         * Updates the Dashboard stats based on the current claims array.
-         */
-        function updateDashboardStats() {
-            const pendingCount = claims.filter(c => c.status === 'Pending').length;
-            const approvedCount = claims.filter(c => c.status === 'Approved').length;
-            const reviewCount = claims.filter(c => c.status === 'UnderReview').length;
-
-            // Calculate total earnings for approved claims
-            const totalEarnings = claims
-                .filter(c => c.status === 'Approved')
-                .reduce((sum, c) => sum + c.amount, 0);
-
-            document.getElementById('stat-pending').textContent = pendingCount;
-            document.getElementById('stat-approved').textContent = approvedCount;
-            document.getElementById('stat-review').textContent = reviewCount;
-            document.getElementById('stat-total-earnings').textContent = `R ${totalEarnings.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, " ")}`;
-
-            // Rerender recent activity section
-            renderRecentActivity();
-        }
-
-        /**
-         * Renders the My Claims table from scratch. Called after any claim status change.
-         */
-        function renderMyClaimsTable() {
-            const tableBody = document.getElementById('my-claims-table-body');
-            const noClaimsMessage = document.getElementById('no-claims-message');
-            tableBody.innerHTML = ''; // Clear existing rows
-
-            if (claims.length === 0) {
-                if (noClaimsMessage) noClaimsMessage.style.display = 'block';
-                return;
-            }
-            if (noClaimsMessage) noClaimsMessage.style.display = 'none';
-
-            // Sort claims by submit date (newest first)
-            claims.slice().sort((a, b) => new Date(b.submitDate) - new Date(a.submitDate)).forEach(claim => {
-                const newRow = tableBody.insertRow();
-                const formattedAmount = `R ${claim.amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, " ")}`;
-                const statusLower = claim.status.toLowerCase();
-
-                // Logic for Checklist requirement: Simple text label or progress bar
-                let progressBarWidth = '0%';
-                let progressBarText = claim.status;
-                let progressBarClass = 'bg-secondary';
-                if (claim.status === 'Pending') {
-                    progressBarWidth = '33%';
-                    progressBarClass = 'bg-warning';
-                } else if (claim.status === 'UnderReview') {
-                    progressBarWidth = '66%';
-                    progressBarClass = 'bg-info';
-                } else if (claim.status === 'Approved') {
-                    progressBarWidth = '100%';
-                    progressBarClass = 'bg-success';
-                } else if (claim.status === 'Rejected') {
-                    progressBarWidth = '100%';
-                    progressBarClass = 'bg-danger';
-                }
-
-
-                // Generate Documents HTML (with download placeholders)
-                const docsHtml = claim.documents.map(doc =>
-                    `<a href="#" onclick="alert('Simulated download of ${doc.fileName}')" title="Download Document"><i class="fas fa-file-alt"></i> ${doc.fileName}</a><br>`
-                ).join('');
-
-                newRow.innerHTML = `
-                    <td>${claim.id.substring(0, 8)}</td>
-                    <td>${claim.module}</td>
-                    <td>${claim.hoursWorked}</td>
-                    <td>${formattedAmount}</td>
-                    <td>
-                        <span class="status-badge status-${statusLower}">${claim.status}</span>
-                        <div class="progress mt-1" style="height: 5px;">
-                            <div class="progress-bar ${progressBarClass}" role="progressbar" style="width: ${progressBarWidth};" aria-valuenow="${progressBarWidth.replace('%', '')}" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <small class="text-muted">${progressBarText}</small>
-                    </td>
-                    <td>${docsHtml || '<span class="text-muted">None</span>'}</td>
-                `;
-            });
-        }
-
-        /**
-         * Renders the Coordinator and Manager tables.
-         */
-        function renderAdminViews() {
-            // Coordinator: Views all PENDING claims
-            const pendingClaims = claims.filter(c => c.status === 'Pending');
-            // Manager: Views all UNDER REVIEW claims
-            const reviewClaims = claims.filter(c => c.status === 'UnderReview');
-
-            // 1. Coordinator View (Pending Claims)
-            const coordTableBody = document.getElementById('coordinator-table-body');
-            const coordCount = document.getElementById('coordinator-count');
-            coordTableBody.innerHTML = '';
-            coordCount.textContent = pendingClaims.length;
-
-            if (pendingClaims.length === 0) {
-                coordTableBody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No pending claims for verification.</td></tr>';
-            } else {
-                pendingClaims.forEach(claim => {
-                    coordTableBody.innerHTML += generateAdminRow(claim, 'coordinator');
-                });
-            }
-
-            // 2. Manager View (UnderReview Claims)
-            const managerTableBody = document.getElementById('manager-table-body');
-            const managerCount = document.getElementById('manager-count');
-            managerTableBody.innerHTML = '';
-            managerCount.textContent = reviewClaims.length;
-
-            if (reviewClaims.length === 0) {
-                 managerTableBody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No claims under review for final approval.</td></tr>';
-            } else {
-                reviewClaims.forEach(claim => {
-                    managerTableBody.innerHTML += generateAdminRow(claim, 'manager');
-                });
-            }
-        }
-
-        /**
-         * Helper function to generate a table row for admin views.
-         */
-        function generateAdminRow(claim, role) {
-            const formattedAmount = `R ${claim.amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, " ")}`;
-
-            // Generate Documents HTML (to view/download)
-            const docsHtml = claim.documents.map(doc =>
-                `<a href="#" onclick="alert('Simulated download of ${doc.fileName}')" title="Download Document"><i class="fas fa-file-alt"></i> ${doc.fileName}</a><br>`
-            ).join('');
-
-            let actionsHtml = '';
-            if (role === 'coordinator') {
-                // Checklist: Verify and reject buttons
-                actionsHtml = `
-                    <button class="btn btn-success btn-sm" onclick="verifyClaim('${claim.id}')"><i class="fas fa-check"></i> Verify</button>
-                    <button class="btn btn-danger btn-sm ms-1" onclick="rejectClaim('${claim.id}')"><i class="fas fa-times"></i> Reject</button>
-                `;
-            } else if (role === 'manager') {
-                 // Checklist: Approve and reject buttons
-                actionsHtml = `
-                    <button class="btn btn-success btn-sm" onclick="approveClaim('${claim.id}')"><i class="fas fa-check"></i> Approve</button>
-                    <button class="btn btn-danger btn-sm ms-1" onclick="rejectClaim('${claim.id}')"><i class="fas fa-times"></i> Reject</button>
-                `;
-            }
-
-            return `
-                <tr id="admin-row-${claim.id}">
-                    <td>${claim.id.substring(0, 8)}</td>
-                    <td>${claim.lecturerId}</td>
-                    <td>${claim.module}</td>
-                    <td>${claim.hoursWorked}</td>
-                    <td>${formattedAmount}</td>
-                    <td>${docsHtml || '<span class="text-muted">None</span>'}</td>
-                    <td>${actionsHtml}</td>
-                </tr>
-            `;
-        }
-
-        // --- ADMIN ACTION FUNCTIONS ---
-
-        /**
-         * Central function to update claim status and re-render all relevant views.
-         */
-        function updateClaimStatus(claimId, newStatus) {
-            const claim = claims.find(c => c.id === claimId);
-            if (!claim) {
-                console.error('Error: Claim not found.');
-                return;
-            }
-
-            const oldStatus = claim.status;
-            claim.status = newStatus;
-
-            alert(`Claim #${claimId.substring(0, 8)} status changed from ${oldStatus} to ${newStatus}.`);
-
-            // --- REFRESH ALL VIEWS ---
-            updateDashboardStats(); // Updates stats and recent activity
-            renderMyClaimsTable();  // Updates Lecturer's view (with progress bar)
-            renderAdminViews();     // Updates Coordinator/Manager views
-        }
-
-        function verifyClaim(claimId) {
-            updateClaimStatus(claimId, 'UnderReview');
-        }
-
-        function approveClaim(claimId) {
-            updateClaimStatus(claimId, 'Approved');
-        }
-
-        function rejectClaim(claimId) {
-            updateClaimStatus(claimId, 'Rejected');
-        }
-
-        // --- SUBMIT CLAIM & UTILITY FUNCTIONS ---
-
-        /**
-         * Calculates the total claim amount (HoursWorked * HourlyRate) and performs validation.
-         */
-        function calculateTotal() {
-            const hoursInput = document.getElementById('hours-worked');
-            const hours = parseFloat(hoursInput.value);
-            const rateInput = document.getElementById('hourly-rate');
-            const rate = parseFloat(rateInput.value.replace('R ', '').replace(',', ''));
-            const totalAmountInput = document.getElementById('total-amount');
-            const hoursError = document.getElementById('hours-error');
-
-            if (isNaN(hours) || hours < 1 || hours > 160) {
-                totalAmountInput.value = 'R 0.00';
-                hoursError.classList.add('show');
-                hoursInput.classList.add('is-invalid');
-                return;
-            }
-
-            hoursError.classList.remove('show');
-            hoursInput.classList.remove('is-invalid');
-
-            const total = hours * rate;
-            totalAmountInput.value = `R ${total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, " ")}`;
-        }
-
-        /**
-         * Updates the character count for the additional notes.
-         */
-        function updateCharCount() {
-            const notesInput = document.getElementById('notes');
-            const charCountSpan = document.getElementById('char-count');
-            charCountSpan.textContent = notesInput.value.length;
-        }
-
-        /**
-         * Handles file selection, validation, and updates the display list.
-         */
-        function handleFileUpload(event) {
-            const files = Array.from(event.target.files);
-            const uploadedFilesContainer = document.getElementById('uploaded-files');
-            const fileInput = document.getElementById('documents');
-            const uploadError = document.getElementById('upload-error');
-            const uploadSuccess = document.getElementById('upload-success');
-
-            uploadError.classList.remove('show');
-            uploadSuccess.classList.remove('show');
-            let hasError = false;
-
-            files.forEach(file => {
-                if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-                    uploadError.innerHTML = `<i class="fas fa-exclamation-triangle me-1"></i> Error: **${file.name}** exceeds the ${MAX_FILE_SIZE_MB}MB limit.`;
-                    uploadError.classList.add('show');
-                    hasError = true;
-                    return;
-                }
-
-                const fileName = file.name.toLowerCase();
-                if (!fileName.endsWith('.pdf') && !fileName.endsWith('.docx') && !fileName.endsWith('.xlsx')) {
-                    uploadError.innerHTML = `<i class="fas fa-exclamation-triangle me-1"></i> Error: **${file.name}** has an unsupported file type.`;
-                    uploadError.classList.add('show');
-                    hasError = true;
-                    return;
-                }
-
-                if (!hasError) {
-                    const newFile = {
-                        id: Date.now().toString() + Math.random().toString(36).substring(2, 9),
-                        fileName: file.name,
-                        fileObject: file
-                    };
-                    uploadedFiles.push(newFile);
-
-                    const fileItem = document.createElement('div');
-                    fileItem.className = 'uploaded-file-item';
-                    fileItem.id = `file-${newFile.id}`;
-                    fileItem.innerHTML = `
-                        <span>
-                            <i class="fas fa-file-alt me-1"></i> ${newFile.fileName}
-                            <span class="encrypted-badge">Encrypted</span>
-                        </span>
-                        <span class="remove-btn" onclick="removeFile('${newFile.id}')"><i class="fas fa-times"></i></span>
-                    `;
-                    uploadedFilesContainer.appendChild(fileItem);
-                }
-            });
-
-            fileInput.value = '';
-
-            if (!hasError && files.length > 0) {
-                 uploadSuccess.innerHTML = `<i class="fas fa-check-circle me-1"></i> Successfully added ${files.length} document(s).`;
-                 uploadSuccess.classList.add('show');
-                 setTimeout(() => uploadSuccess.classList.remove('show'), 3000);
-            }
-        }
-
-        function removeFile(fileId) {
-            uploadedFiles = uploadedFiles.filter(f => f.id !== fileId);
-            const fileElement = document.getElementById(`file-${fileId}`);
-            if (fileElement) {
-                fileElement.remove();
-            }
-             const uploadSuccess = document.getElementById('upload-success');
-             if (uploadSuccess) {
-                 uploadSuccess.innerHTML = `<i class="fas fa-check-circle me-1"></i> Document removed.`;
-                 uploadSuccess.classList.add('show');
-                 setTimeout(() => uploadSuccess.classList.remove('show'), 3000);
-             }
-        }
-
-
-        function exportReport() {
-            alert('Exporting report... (Placeholder function executed)');
-             const quickActionsDiv = document.querySelector('.d-grid.gap-2');
-             const message = document.createElement('div');
-             message.className = 'alert alert-info mt-3';
-             message.textContent = 'Report generation started. Check your downloads soon!';
-             quickActionsDiv.appendChild(message);
-             setTimeout(() => message.remove(), 4000);
-        }
-
-        /**
-         * Handles the client-side validation and simulated submission of the claim form.
-         */
-        function submitClaim(event) {
-            event.preventDefault();
-
-            const form = document.getElementById('claimForm');
-            const hoursInput = document.getElementById('hours-worked');
-            const moduleSelect = document.getElementById('module');
-            const hoursError = document.getElementById('hours-error');
-            const moduleError = document.getElementById('module-error');
-
-            let isValid = true;
-
-            // 1. Validate Hours (re-run calculation logic to show error message)
-            calculateTotal();
-            if (hoursError.classList.contains('show')) {
-                 hoursInput.focus();
-                 isValid = false;
-            }
-
-            // 2. Validate Module selection
-            if (moduleSelect.value === "") {
-                moduleError.classList.add('show');
-                moduleSelect.classList.add('is-invalid');
-                if (isValid) moduleSelect.focus();
-                isValid = false;
-            } else {
-                moduleError.classList.remove('show');
-                moduleSelect.classList.remove('is-invalid');
-            }
-
-            // 3. Final submission logic
-            if (isValid) {
-
-                // --- 1. GATHER DATA AND CONSTRUCT CLAIM OBJECT ---
-                const hours = parseFloat(hoursInput.value);
-                const rate = parseFloat(document.getElementById('hourly-rate').value.replace('R ', '').replace(/ /g, '').replace(',', ''));
-                const amount = hours * rate;
-
-                const now = new Date();
-                const newClaim = {
-                    id: 'CL' + now.getTime().toString().substring(3) + Math.floor(Math.random() * 900 + 100), // Generate unique ID
-                    lecturerId: document.getElementById('employee-id').value,
-                    hoursWorked: hours,
-                    hourlyRate: rate,
-                    amount: amount,
-                    module: moduleSelect.value,
-                    notes: document.getElementById('notes').value,
-                    claimPeriod: document.getElementById('claim-period').value,
-                    status: 'Pending', // Default status
-                    submitDate: now.toLocaleDateString('en-ZA', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    }).replace(',', ''),
-                    documents: uploadedFiles.map(f => ({ fileName: f.fileName, id: f.id }))
-                };
-
-                claims.push(newClaim);
-
-                alert('Client-side validation passed. Submitting claim to server...');
-
-                const submitButton = form.querySelector('button[type="submit"]');
-                const originalContent = submitButton.innerHTML;
-
-                // Simulate loading state
-                submitButton.disabled = true;
-                submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Submitting...';
-
-                setTimeout(() => {
-                    // --- 2. UPDATE UI AFTER SIMULATED SUCCESS ---
-
-                    updateDashboardStats(); // Updates stats and recent activity
-                    renderMyClaimsTable();  // Updates Lecturer's claims list
-                    renderAdminViews();     // Updates Coordinator/Manager lists
-
-                    alert('Claim submitted successfully (Simulated).');
-
-                    // 2.2. Reset form and UI
-                    form.reset();
-                    uploadedFiles = [];
-                    document.getElementById('uploaded-files').innerHTML = '';
-                    document.getElementById('char-count').textContent = '0';
-                    document.getElementById('total-amount').value = 'R 0.00';
-
-                    // Show success on button then restore
-                    submitButton.innerHTML = '<i class="fas fa-check me-2"></i> Submitted!';
-                    submitButton.classList.remove('btn-primary');
-                    submitButton.classList.add('btn-success');
-
-                    setTimeout(() => {
-                        submitButton.innerHTML = originalContent;
-                        submitButton.classList.add('btn-primary');
-                        submitButton.classList.remove('btn-success');
-                        submitButton.disabled = false;
-                        showSection('dashboard'); // Redirect to dashboard
-                    }, 1000);
-
-                }, 1500);
-
-            } else {
-                alert('Please fix the errors before submitting the claim.');
-            }
-        }
-
-        // --- INITIALIZATION & UNIT TESTS ---
-
-        document.addEventListener('DOMContentLoaded', function() {
-             const form = document.getElementById('claimForm');
-             if (form) {
-                 form.addEventListener('submit', submitClaim);
-             }
-             // Initial run of calculation and view rendering
-             calculateTotal();
-             updateDashboardStats();
-             renderMyClaimsTable();
-        });
-
-
-        // Unit Test Framework (Re-inserted for client-side functionality testing)
-        const tests = {
-            results: [],
-            assert: function(condition, message) {
-                const status = condition ? 'PASS' : 'FAIL';
-                this.results.push({ status, message });
-                console.log(`[${status}] ${message}`);
-            },
-            test: function(name, fn) {
-                console.log(`\n--- Running Test: ${name} ---`);
-                fn.call(this);
-            },
-            runAll: function() {
-                console.log('\n========== STARTING UNIT TESTS ==========');
-
-                // Mock dependencies for unit tests
-                document.getElementById('upload-error').classList.remove('show');
-                document.getElementById('upload-success').classList.remove('show');
-
-
-                this.test('showSection() navigation', () => {
-                    showSection('dashboard');
-                    this.assert(!document.getElementById('dashboard').classList.contains('hidden'), 'Dashboard should be visible');
-                    showSection('submit-claim');
-                    this.assert(!document.getElementById('submit-claim').classList.contains('hidden'), 'Submit Claim should be visible');
-                    this.assert(document.querySelector('[onclick="showSection(\'submit-claim\')"]').classList.contains('active'), 'Submit Claim link should be active');
-                });
-
-                this.test('calculateTotal() with valid input', () => {
-                    document.getElementById('hours-worked').value = '10';
-                    calculateTotal();
-                    const expectedValue = document.getElementById('total-amount').value;
-                    this.assert(expectedValue === 'R 3 500.00', 'Total amount should be R 3 500.00');
-                    this.assert(!document.getElementById('hours-error').classList.contains('show'), 'Hours error should not be shown');
-                });
-
-                this.test('calculateTotal() with invalid input (too high)', () => {
-                    document.getElementById('hours-worked').value = '200';
-                    calculateTotal();
-                    this.assert(document.getElementById('total-amount').value === 'R 0.00', 'Total amount should be R 0.00 on error');
-                    this.assert(document.getElementById('hours-error').classList.contains('show'), 'Hours error should be shown for > 160');
-                });
-
-                this.test('updateCharCount() logic', () => {
-                    document.getElementById('notes').value = 'This is a test note.';
-                    updateCharCount();
-                    this.assert(document.getElementById('char-count').textContent === '20', 'Character count should be 20');
-                });
-
-                this.test('handleFileUpload() with valid file', () => {
-                    const mockFile = new File(['test'], 'valid.pdf', { type: 'application/pdf' });
-                    Object.defineProperty(mockFile, 'size', { value: 100 * 1024 });
-
-                    document.getElementById('uploaded-files').innerHTML = '';
-                    uploadedFiles = [];
-
-                    handleFileUpload({ target: { files: [mockFile], value: '' } }); // Added value to mock clearing
-                    this.assert(uploadedFiles.length === 1, 'Valid file should be added to the list');
-                    this.assert(document.getElementById('uploaded-files').children.length === 1, 'File name should be displayed');
-                    this.assert(document.getElementById('upload-success').classList.contains('show'), 'Success message should be shown');
-                    this.assert(!document.getElementById('upload-error').classList.contains('show'), 'Error should not be shown for valid file');
-                });
-
-                this.test('handleFileUpload() with invalid file size', () => {
-                    const mockFile = new File(['test'], 'large.pdf', { type: 'application/pdf' });
-                    Object.defineProperty(mockFile, 'size', { value: 6 * 1024 * 1024 });
-
-                    document.getElementById('uploaded-files').innerHTML = '';
-                    uploadedFiles = [];
-
-                    handleFileUpload({ target: { files: [mockFile], value: '' } });
-                    this.assert(uploadedFiles.length === 0, 'Large file should not be added to the list');
-                    this.assert(document.getElementById('upload-error').classList.contains('show'), 'Error should be shown for file > 5MB');
-                });
-
-                this.test('submitClaim() with valid data check', () => {
-                    // Setup data for submission
-                    claims.length = 0;
-                    document.getElementById('hours-worked').value = '10';
-                    document.getElementById('module').value = 'PROG6212';
-                    document.getElementById('claim-period').value = '2025-10';
-
-                    // Mock functions for non-interruptive testing
-                    const originalAlert = window.alert;
-                    const originalTimeout = window.setTimeout;
-                    window.alert = () => {};
-                    window.setTimeout = (fn) => fn();
-
-                    const event = { preventDefault: () => {} };
-                    submitClaim(event);
-
-                    // Restore original functions
-                    window.alert = originalAlert;
-                    window.setTimeout = originalTimeout;
-
-                    this.assert(claims.length === 1, 'Claim should be added to the global claims array');
-                    this.assert(document.getElementById('coordinator-table-body').children.length === 1, 'New claim should appear in Coordinator view (Pending)');
-
-                    const initialClaimId = claims[0].id;
-
-                    // --- Test Coordinator Action (Verify) ---
-                    verifyClaim(initialClaimId);
-                    this.assert(claims[0].status === 'UnderReview', 'Coordinator Verify should change status to UnderReview');
-                    this.assert(document.getElementById('coordinator-table-body').children.length === 1 && document.getElementById('coordinator-table-body').children[0].innerHTML.includes('No pending claims'), 'Coordinator table should now be empty');
-                    this.assert(document.getElementById('manager-table-body').children.length === 1 && !document.getElementById('manager-table-body').children[0].innerHTML.includes('No claims under review'), 'Claim should move to Manager table');
-
-                    // --- Test Manager Action (Approve) ---
-                    approveClaim(initialClaimId);
-                    this.assert(claims[0].status === 'Approved', 'Manager Approve should change status to Approved');
-                    this.assert(document.getElementById('manager-table-body').children.length === 1 && document.getElementById('manager-table-body').children[0].innerHTML.includes('No claims under review'), 'Manager table should now be empty');
-                    this.assert(document.getElementById('stat-approved').textContent === '1', 'Dashboard Approved count should be 1');
-
-                    // --- Test Rejection ---
-                    const mockClaim = { id: 'CLTEST', hoursWorked: 5, hourlyRate: 350, amount: 1750, module: 'TEST', status: 'Pending', documents: [], submitDate: new Date() };
-                    claims.push(mockClaim);
-                    renderAdminViews(); // Add to coordinator view
-                    rejectClaim('CLTEST');
-                    this.assert(claims.find(c => c.id === 'CLTEST').status === 'Rejected', 'Reject action should change status to Rejected');
-
-                    this.assert(!document.getElementById('hours-error').classList.contains('show') &&
-                                !document.getElementById('module-error').classList.contains('show'), 'Validation should pass for valid data');
-                });
-
-
-                console.log('\n========== TEST SUMMARY ==========');
-                console.log(`Total: ${this.results.length}`);
-                console.log(`Passed: ${this.results.filter(r => r.status === 'PASS').length}`);
-                console.log(`Failed: ${this.results.filter(r => r.status === 'FAIL').length}`);
-                console.log('==================================\n');
-            }
-        };
-        setTimeout(() => tests.runAll(), 2000); // Run tests on page load delay
-    </script>
-
-    @section Scripts {
-        @{
-            await Html.RenderPartialAsync("_ValidationScriptsPartial");
-        }
+    </div>
+</div>
+
+<style>
+    /* Enhanced Dashboard Styling */
+    .stats-card {
+        background: white;
+        border: none;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        transition: all 0.3s ease;
+        height: 100%;
+        border-left: 4px solid #dee2e6;
     }
-</body>
-</html>
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+        }
+
+    .border-start-warning {
+        border-left-color: #ffc107 !important;
+    }
+
+    .border-start-info {
+        border-left-color: #0dcaf0 !important;
+    }
+
+    .border-start-success {
+        border-left-color: #198754 !important;
+    }
+
+    .border-start-primary {
+        border-left-color: #0d6efd !important;
+    }
+
+    .stats-number {
+        font-size: 2.25rem;
+        font-weight: 800;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+    }
+
+    .stats-label {
+        color: #6c757d;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+    }
+
+    .stats-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .status-badge {
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .status-Pending {
+        background-color: #fef3c7;
+        color: #d97706;
+    }
+
+    .status-UnderReview {
+        background-color: #dbeafe;
+        color: #2563eb;
+    }
+
+    .status-Approved {
+        background-color: #d1fae5;
+        color: #059669;
+    }
+
+    .status-Rejected {
+        background-color: #fee2e2;
+        color: #dc2626;
+    }
+</style>

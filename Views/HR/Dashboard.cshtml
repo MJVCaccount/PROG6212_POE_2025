@@ -1,0 +1,77 @@
+﻿@model Contract_Monthly_Claim_System.Controllers.HRDashboardStats
+@{
+    ViewData["Title"] = "HR Analytics";
+}
+
+<div class="container py-4">
+    <h2 class="fw-bold mb-4 text-dark">HR Analytics Dashboard</h2>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 border-start border-4 border-primary">
+                <div class="card-body">
+                    <h6 class="text-uppercase text-muted fw-bold mb-2">Total Staff</h6>
+                    <h2 class="display-4 fw-bold text-primary mb-0">@Model.TotalLecturers</h2>
+                    <small class="text-success"><i class="fas fa-user-check me-1"></i> @Model.ActiveLecturers Active</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 border-start border-4 border-success">
+                <div class="card-body">
+                    <h6 class="text-uppercase text-muted fw-bold mb-2">Monthly Payout</h6>
+                    <h2 class="display-5 fw-bold text-success mb-0">R @Model.TotalPaymentsThisMonth.ToString("N0")</h2>
+                    <small class="text-muted">Approved claims this month</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 border-start border-4 border-warning">
+                <div class="card-body">
+                    <h6 class="text-uppercase text-muted fw-bold mb-2">Claim Volume</h6>
+                    <h2 class="display-4 fw-bold text-warning mb-0">@Model.TotalClaims</h2>
+                    <small class="text-danger"><i class="fas fa-times-circle me-1"></i> @Model.RejectedClaims Rejected</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <a asp-action="Index" class="card bg-white border-0 shadow-sm text-decoration-none hover-shadow h-100">
+                <div class="card-body p-4 d-flex align-items-center">
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3 text-primary">
+                        <i class="fas fa-users fa-2x"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold text-dark mb-1">Manage Lecturers</h5>
+                        <p class="text-muted mb-0 small">Add users, update contract rates (Automation Source).</p>
+                    </div>
+                    <i class="fas fa-arrow-right ms-auto text-muted"></i>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-6">
+            <a asp-action="GenerateReport" class="card bg-white border-0 shadow-sm text-decoration-none hover-shadow h-100">
+                <div class="card-body p-4 d-flex align-items-center">
+                    <div class="bg-success bg-opacity-10 p-3 rounded-circle me-3 text-success">
+                        <i class="fas fa-file-csv fa-2x"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold text-dark mb-1">Financial Reports</h5>
+                        <p class="text-muted mb-0 small">Generate invoices and export payment data.</p>
+                    </div>
+                    <i class="fas fa-arrow-right ms-auto text-muted"></i>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-shadow:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+        transition: all .3s;
+    }
+</style>

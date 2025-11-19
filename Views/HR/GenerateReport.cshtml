@@ -1,0 +1,89 @@
+﻿@model Contract_Monthly_Claim_System.Models.PaymentReportViewModel
+@{
+    ViewData["Title"] = "Generate Report";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-success text-white p-4">
+                    <h3 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Payment Report Generator</h3>
+                    <p class="mb-0 opacity-75">Generate automated financial reports for approved claims.</p>
+                </div>
+
+                <div class="card-body p-4">
+                    <form asp-action="GenerateReport" method="get" class="row g-3 mb-5 align-items-end bg-light p-3 rounded-3 border">
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Start Date</label>
+                            <input type="date" name="startDate" value="@ViewBag.StartDate" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">End Date</label>
+                            <input type="date" name="endDate" value="@ViewBag.EndDate" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary w-100 fw-bold">
+                                <i class="fas fa-sync-alt me-2"></i>Generate Report
+                            </button>
+                        </div>
+                    </form>
+
+                    @if (Model != null)
+                    {
+                        <div class="row mb-4 text-center">
+                            <div class="col-md-6">
+                                <div class="p-3 border rounded bg-white shadow-sm">
+                                    <small class="text-uppercase text-muted fw-bold">Total Approved Claims</small>
+                                    <h2 class="fw-bold text-dark mb-0">@Model.TotalClaims</h2>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 border rounded bg-white shadow-sm border-bottom border-4 border-success">
+                                    <small class="text-uppercase text-muted fw-bold">Total Payout</small>
+                                    <h2 class="fw-bold text-success mb-0">R @Model.TotalAmount.ToString("N2")</h2>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h5 class="fw-bold mb-3">Detailed Breakdown</h5>
+                        <div class="table-responsive mb-4">
+                            <table class="table table-bordered table-striped align-middle">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Lecturer ID</th>
+                                        <th>Name</th>
+                                        <th>Claims Count</th>
+                                        <th>Total Hours</th>
+                                        <th class="text-end">Total Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.ClaimBreakdown)
+                                    {
+                                        <tr>
+                                            <td>@item.LecturerId</td>
+                                            <td>@item.LecturerName</td>
+                                            <td class="text-center">@item.ClaimCount</td>
+                                            <td class="text-center">@item.TotalHours</td>
+                                            <td class="text-end fw-bold">R @item.TotalAmount.ToString("N2")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="text-end">
+                            <a asp-action="ExportReportCSV"
+                               asp-route-startDate="@Model.StartDate.ToString("yyyy-MM-dd")"
+                               asp-route-endDate="@Model.EndDate.ToString("yyyy-MM-dd")"
+                               class="btn btn-success btn-lg shadow-sm">
+                                <i class="fas fa-file-csv me-2"></i>Download CSV
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

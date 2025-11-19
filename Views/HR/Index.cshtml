@@ -1,0 +1,61 @@
+﻿@model IEnumerable<Contract_Monthly_Claim_System.Models.Lecturer>
+@{
+    ViewData["Title"] = "Manage Lecturers";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-dark">Lecturer Directory</h2>
+        <a asp-action="AddLecturer" class="btn btn-primary shadow-sm">
+            <i class="fas fa-user-plus me-2"></i>Add New Lecturer
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Name / ID</th>
+                        <th>Department</th>
+                        <th>Hourly Rate (Auto)</th>
+                        <th>Status</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-bold">@item.Name</div>
+                                <small class="text-muted">@item.LecturerId</small>
+                            </td>
+                            <td>@item.Department</td>
+                            <td>
+                                <span class="badge bg-light text-dark border">
+                                    R @item.HourlyRate.ToString("N2")
+                                </span>
+                            </td>
+                            <td>
+                                @if (item.IsActive)
+                                {
+                                    <span class="badge bg-success bg-opacity-10 text-success">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger bg-opacity-10 text-danger">Inactive</span>
+                                }
+                            </td>
+                            <td class="text-end pe-4">
+                                <a asp-action="EditLecturer" asp-route-id="@item.LecturerId" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

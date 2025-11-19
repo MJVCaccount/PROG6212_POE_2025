@@ -1,256 +1,310 @@
+/* --- 1. GLOBAL VARIABLES & THEME --- */
 :root {
-    --iie-primary: #003087;
-    --iie-secondary: #004d99;
-    --iie-accent: #ffcc00;
-    --success-color: #28a745;
-    --danger-color: #dc3545;
-    --warning-color: #ffc107;
+    /* Modern Color Palette - High Contrast & Professional */
+    --primary-color: #0f766e; /* Deep Teal - Trust & Professionalism */
+    --primary-hover: #115e59; /* Darker Teal for Hovers */
+    --secondary-color: #f97316; /* Orange/Coral - Visibility for Buttons */
+    --bg-body: #f3f4f6; /* Light Gray/Blue tint for reduced eye strain */
+    --bg-card: #ffffff; /* Pure White for cards */
+    /* Semantic Colors */
+    --success-bg: #d1fae5;
+    --success-text: #065f46;
+    --warning-bg: #fef3c7;
+    --warning-text: #92400e;
+    --danger-bg: #fee2e2;
+    --danger-text: #b91c1c;
+    --info-bg: #dbeafe;
+    --info-text: #1e40af;
+    /* Shadows for Depth */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
+/* --- 2. CORE LAYOUT --- */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-body);
+    color: #1f2937; /* Soft Black */
+    line-height: 1.5;
     min-height: 100vh;
 }
 
+/* Modern Header Style */
 .header {
-    background: linear-gradient(45deg, var(--iie-primary), var(--iie-secondary));
+    background: var(--primary-color);
+    background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
     color: white;
-    padding: 15px 0;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    padding: 20px 0;
+    box-shadow: var(--shadow-md);
 }
 
+    .header h3 {
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+/* Navbar Refinement */
 .navbar {
-    background-color: var(--iie-secondary);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background-color: var(--bg-card);
+    border-bottom: 1px solid #e5e7eb;
+    box-shadow: var(--shadow-sm);
+    padding: 0.75rem 1rem;
 }
 
     .navbar .nav-link {
-        color: white !important;
-        font-weight: 500;
-        padding: 10px 20px !important;
-        border-radius: 5px;
-        margin: 0 5px;
-        transition: all 0.3s ease;
+        color: #4b5563 !important;
+        font-weight: 600;
+        padding: 8px 16px !important;
+        border-radius: 8px;
+        transition: all 0.2s ease-in-out;
     }
 
         .navbar .nav-link:hover {
-            background-color: var(--iie-accent);
-            color: var(--iie-primary) !important;
+            background-color: #f0fdfa; /* Very light teal */
+            color: var(--primary-color) !important;
             transform: translateY(-1px);
         }
 
         .navbar .nav-link.active {
-            background-color: var(--iie-accent);
-            color: var(--iie-primary) !important;
+            background-color: var(--primary-color);
+            color: white !important;
+            box-shadow: var(--shadow-sm);
         }
 
+/* Main Content Container */
 .content-container {
-    margin: 30px auto;
+    background: var(--bg-card);
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    margin: 2rem auto;
     max-width: 1200px;
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     overflow: hidden;
-    animation: slideIn 0.5s ease-out;
+    border: 1px solid rgba(0,0,0,0.02);
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .content-header {
-    background: linear-gradient(135deg, var(--iie-primary), var(--iie-secondary));
-    color: white;
-    padding: 20px 30px;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 25px 35px;
 }
+
+    .content-header h2 {
+        color: var(--primary-color);
+        font-weight: 800;
+        font-size: 1.75rem;
+    }
 
 .content-body {
-    padding: 30px;
+    padding: 35px;
 }
 
+/* --- 3. VISUAL ELEMENTS & CARDS --- */
+
+/* Dashboard Stats Cards */
 .stats-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 15px;
+    background: white;
+    color: #374151;
+    border-radius: 12px;
     padding: 25px;
     margin: 10px 0;
     text-align: center;
-    transition: transform 0.3s ease;
+    border: 1px solid #e5e7eb;
+    border-left: 5px solid var(--primary-color); /* Colored accent on left */
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
 }
 
     .stats-card:hover {
         transform: translateY(-5px);
+        box-shadow: var(--shadow-md);
+        border-color: var(--primary-color);
     }
 
 .stats-number {
     font-size: 2.5rem;
-    font-weight: bold;
-    margin-bottom: 10px;
+    font-weight: 800;
+    color: var(--primary-color);
+    line-height: 1;
+    margin-bottom: 5px;
 }
 
-.form-section {
-    background: #f8f9fa;
-    border-radius: 15px;
-    padding: 25px;
-    margin: 20px 0;
-    border: 1px solid #e9ecef;
-}
-
-.btn-primary {
-    background: linear-gradient(45deg, var(--iie-primary), var(--iie-secondary));
-    border: none;
-    padding: 12px 30px;
-    border-radius: 25px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
-
-.status-badge {
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.status-pending {
-    background-color: var(--warning-color);
-    color: #212529;
-}
-
-.status-approved {
-    background-color: var(--success-color);
-    color: white;
-}
-
-.status-rejected {
-    background-color: var(--danger-color);
-    color: white;
-}
-
-.status-under-review {
-    background-color: #17a2b8;
-    color: white;
-}
-
+/* Claim Detail Cards */
 .claim-card {
-    border: none;
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-    transition: all 0.3s ease;
-    margin-bottom: 20px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease;
+    margin-bottom: 15px;
 }
 
     .claim-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        border-color: #99f6e4; /* Light teal border on hover */
+        box-shadow: var(--shadow-md);
     }
 
+/* Form Sections */
+.form-section {
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 25px;
+}
+
+    .form-section h4 {
+        color: var(--primary-color);
+        font-weight: 700;
+        margin-bottom: 20px;
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+/* --- 4. BUTTONS & INTERACTIONS (High Visibility) --- */
+
+/* Primary Action Button */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    padding: 10px 24px;
+    font-weight: 600;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(15, 118, 110, 0.3); /* Teal shadow glow */
+    transition: all 0.2s ease;
+}
+
+    .btn-primary:hover {
+        background-color: var(--primary-hover);
+        border-color: var(--primary-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 8px rgba(15, 118, 110, 0.4);
+    }
+
+/* Secondary / Outline Buttons */
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    border-width: 2px;
+    font-weight: 600;
+}
+
+    .btn-outline-primary:hover {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+/* Danger / Reject Buttons */
+.btn-danger, .btn-outline-danger {
+    font-weight: 600;
+    border-radius: 8px;
+}
+
+.btn-success {
+    background-color: #059669;
+    border: none;
+    box-shadow: 0 4px 6px rgba(5, 150, 105, 0.3);
+}
+
+/* File Upload Area */
 .file-upload-area {
-    border: 2px dashed #ccc;
-    border-radius: 15px;
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
     padding: 40px;
     text-align: center;
-    background: #f8f9fa;
+    background-color: #f8fafc;
     transition: all 0.3s ease;
     cursor: pointer;
+    color: #64748b;
 }
 
     .file-upload-area:hover {
-        border-color: var(--iie-primary);
-        background: #e3f2fd;
+        border-color: var(--primary-color);
+        background-color: #f0fdfa;
+        color: var(--primary-color);
     }
 
-.progress-tracker {
-    display: flex;
-    justify-content: space-between;
-    margin: 30px 0;
-    position: relative;
+/* --- 5. STATUS BADGES (Pastel Pills) --- */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 9999px; /* Pill shape */
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: inline-block;
 }
 
-    .progress-tracker::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background: #dee2e6;
-        z-index: 1;
-    }
-
-.progress-step {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #e9ecef;
-    border: 3px solid #dee2e6;
-    position: relative;
-    z-index: 2;
+.status-pending {
+    background-color: var(--warning-bg);
+    color: var(--warning-text);
+    border: 1px solid #fde68a;
 }
 
-    .progress-step.active {
-        background: var(--iie-primary);
-        color: white;
-        border-color: var(--iie-primary);
-    }
+.status-approved {
+    background-color: var(--success-bg);
+    color: var(--success-text);
+    border: 1px solid #a7f3d0;
+}
 
-    .progress-step.completed {
-        background: var(--success-color);
-        color: white;
-        border-color: var(--success-color);
-    }
+.status-rejected {
+    background-color: var(--danger-bg);
+    color: var(--danger-text);
+    border: 1px solid #fecaca;
+}
 
+.status-underreview {
+    background-color: var(--info-bg);
+    color: var(--info-text);
+    border: 1px solid #bfdbfe;
+}
+
+/* --- 6. UTILITIES & FOOTER --- */
 .footer {
-    background: var(--iie-primary);
-    color: white;
-    text-align: center;
-    padding: 20px 0;
-    margin-top: 50px;
+    background-color: #111827; /* Very dark grey */
+    color: #9ca3af;
+    padding: 40px 0;
+    margin-top: 60px;
+    font-size: 0.9rem;
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 .active-section {
     display: block;
+    animation: fadeIn 0.3s ease-out;
 }
 
-.action-btn {
-    border-radius: 20px;
-    padding: 8px 20px;
-    font-weight: 600;
-    border: none;
-    margin: 0 5px;
-    transition: all 0.3s ease;
+/* Input Fields Polish */
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    padding: 10px 15px;
+    transition: border-color 0.2s;
 }
 
-    .action-btn:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
     }
 
-.notification-bell {
-    position: relative;
-}
-
-.notification-count {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background: var(--danger-color);
-    color: white;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.text-primary {
+    color: var(--primary-color) !important;
 }

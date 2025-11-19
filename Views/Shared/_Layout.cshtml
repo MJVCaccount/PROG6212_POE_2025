@@ -1,35 +1,437 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contract Monthly Claim System - IIE</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Contract Claim System</title>
+
+    <!-- Bootstrap 5.3 CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom Site CSS -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <style>
+        /* Modern Professional Navigation Bar */
+        :root {
+            --primary-color: #0f766e;
+            --secondary-color: #0d9488;
+            --accent-color: #f43f5e;
+            --bg-light: #f3f4f6;
+            --text-dark: #1f2937;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        /* Enhanced Navbar */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: 700;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+            .navbar-brand i {
+                font-size: 1.5rem;
+            }
+
+        .nav-link {
+            color: #4b5563 !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            margin: 0 0.25rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+            .nav-link:hover {
+                background: #f3f4f6;
+                color: var(--primary-color) !important;
+            }
+
+            .nav-link.active {
+                background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+                color: white !important;
+            }
+
+        /* User Profile Section in Navbar */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.5rem 1rem;
+            background: #f3f4f6;
+            border-radius: 50px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #1f2937;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border-radius: 12px;
+            padding: 0.5rem;
+        }
+
+        .dropdown-item {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            transition: all 0.2s ease;
+        }
+
+            .dropdown-item:hover {
+                background: #f3f4f6;
+            }
+
+        /* Alert Styling */
+        .alert {
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .alert-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        /* Footer */
+        .footer {
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+
+        /* Role Badge */
+        .role-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .role-lecturer {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .role-coordinator {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .role-manager {
+            background: #ede9fe;
+            color: #6b21a8;
+        }
+
+        .role-hr {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
 </head>
 <body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container-fluid">
+                <!-- Brand Logo -->
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-university"></i>
+                    <span>CMCS Portal</span>
+                </a>
 
+                <!-- Mobile Toggle Button -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
+                <!-- Navigation Links -->
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Index">
+                                <i class="fas fa-home"></i>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Claim" asp-action="Submit">
+                                <i class="fas fa-plus-circle"></i>
+                                Submit Claim
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Claim" asp-action="ViewClaims">
+                                <i class="fas fa-list"></i>
+                                My Claims
+                            </a>
+                        </li>
 
+                        <!-- Admin Links (Show based on role) -->
+                        @if (Context.Session.GetString("UserRole") == "Coordinator" ||
+                                                Context.Session.GetString("UserRole") == "Manager" ||
+                                                Context.Session.GetString("UserRole") == "HR")
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-user-shield"></i>
+                                    Administration
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                                    @if (Context.Session.GetString("UserRole") == "Coordinator" ||
+                                                                    Context.Session.GetString("UserRole") == "Manager" ||
+                                                                    Context.Session.GetString("UserRole") == "HR")
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" asp-controller="Claim" asp-action="CoordinatorApprove">
+                                                <i class="fas fa-user-check me-2"></i>Coordinator View
+                                            </a>
+                                        </li>
+                                    }
+                                    @if (Context.Session.GetString("UserRole") == "Manager" ||
+                                                                    Context.Session.GetString("UserRole") == "HR")
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" asp-controller="Claim" asp-action="ManagerApprove">
+                                                <i class="fas fa-user-tie me-2"></i>Manager View
+                                            </a>
+                                        </li>
+                                    }
+                                    @if (Context.Session.GetString("UserRole") == "HR")
+                                    {
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <a class="dropdown-item" asp-controller="HR" asp-action="Dashboard">
+                                                <i class="fas fa-chart-pie me-2"></i>HR Dashboard
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" asp-controller="HR" asp-action="Index">
+                                                <i class="fas fa-users me-2"></i>Manage Lecturers
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" asp-controller="HR" asp-action="GenerateReport">
+                                                <i class="fas fa-file-invoice me-2"></i>Generate Report
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+                    </ul>
 
-    <main>
-        @RenderBody()
-    </main>
+                    <!-- User Profile Section -->
+                    @if (!string.IsNullOrEmpty(Context.Session.GetString("UserId")))
+                    {
+                        <div class="dropdown">
+                            <a class="user-profile dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                <div class="user-avatar">
+                                    @Context.Session.GetString("UserName")?.Substring(0, 1).ToUpper()
+                                </div>
+                                <div class="user-info d-none d-lg-flex">
+                                    <span class="user-name">@Context.Session.GetString("UserName")</span>
+                                    <span class="user-role">
+                                        <span class="role-badge role-@Context.Session.GetString("UserRole")?.ToLower()">
+                                            @Context.Session.GetString("UserRole")
+                                        </span>
+                                    </span>
+                                </div>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li>
+                                    <a class="dropdown-item disabled">
+                                        <i class="fas fa-id-badge me-2"></i>
+                                        @Context.Session.GetString("LecturerId")
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Account" asp-action="ChangePassword">
+                                        <i class="fas fa-key me-2"></i>Change Password
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form asp-controller="Account" asp-action="Logout" method="post" style="margin: 0;">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <a class="btn btn-primary" asp-controller="Account" asp-action="Login">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </a>
+                    }
+                </div>
+            </div>
+        </nav>
+    </header>
 
+    <!-- Main Content Container -->
+    <div class="container">
+        <!-- Success/Error/Warning/Info Messages -->
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                <i class="fas fa-check-circle"></i>
+                <span>@TempData["Success"]</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
 
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>@TempData["Error"]</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-               function showSection(sectionId) {
+        @if (TempData["Warning"] != null)
+        {
+            <div class="alert alert-warning alert-dismissible fade show mt-3" role="alert">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>@TempData["Warning"]</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
 
-        document.querySelectorAll('.content-container').forEach(container => container.classList.add('hidden'));
-                   document.getElementById(sectionId).classList.remove('hidden');
-                   document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-                   document.querySelector(`[onclick="showSection('${sectionId}')"]`).classList.add('active');
-               }
-    </script>
+        @if (TempData["Info"] != null)
+        {
+            <div class="alert alert-info alert-dismissible fade show mt-3" role="alert">
+                <i class="fas fa-info-circle"></i>
+                <span>@TempData["Info"]</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
 
+        <!-- Page Content -->
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <p class="mb-2">
+                <strong>Contract Monthly Claim System</strong> - Independent Institute of Education
+            </p>
+            <p class="text-muted small mb-0">
+                &copy; 2025 IIE. All rights reserved. |
+                <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-decoration-none">Privacy Policy</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- jQuery -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom Site JS -->
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <!-- Render Page-Specific Scripts -->
     @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        // Auto-dismiss alerts after 5 seconds
+        setTimeout(function() {
+            $('.alert').fadeOut('slow');
+        }, 5000);
+
+        // Add active class to current nav link
+        $(document).ready(function() {
+            var path = window.location.pathname;
+            $('.nav-link').each(function() {
+                var href = $(this).attr('href');
+                if (path === href || (href !== '/' && path.indexOf(href) === 0)) {
+                    $(this).addClass('active');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

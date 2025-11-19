@@ -1,0 +1,81 @@
+﻿@model Contract_Monthly_Claim_System.Models.Lecturer
+@{
+    ViewData["Title"] = "Edit Lecturer";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-primary text-white p-4 rounded-top-4" style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));">
+                    <h4 class="mb-0 fw-bold"><i class="fas fa-user-edit me-2"></i>Edit Lecturer Profile</h4>
+                    <p class="mb-0 opacity-75 small">Updates here affect automated claim calculations instantly.</p>
+                </div>
+
+                <div class="card-body p-4">
+                    <form asp-action="EditLecturer" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="LecturerId" />
+
+                        <div class="mb-4 text-center">
+                            <div class="avatar bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 80px; height: 80px;">
+                                <i class="fas fa-user fa-3x text-muted"></i>
+                            </div>
+                            <h5 class="fw-bold">@Model.Name</h5>
+                            <p class="text-muted font-monospace">ID: @Model.LecturerId</p>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Name" class="form-control" placeholder="Full Name" />
+                            <label asp-for="Name">Full Name</label>
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Email" class="form-control" placeholder="name@example.com" />
+                            <label asp-for="Email">Email Address</label>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Department" class="form-control" placeholder="Department" />
+                            <label asp-for="Department">Department</label>
+                        </div>
+
+                        <div class="card bg-warning bg-opacity-10 border-warning border-opacity-25 mb-4">
+                            <div class="card-body">
+                                <label asp-for="HourlyRate" class="form-label fw-bold text-dark">
+                                    <i class="fas fa-bolt text-warning me-1"></i> Hourly Rate (Automation Source)
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0">R</span>
+                                    <input asp-for="HourlyRate" class="form-control border-start-0 fw-bold text-dark" type="number" step="0.01" />
+                                </div>
+                                <div class="form-text text-muted small mt-2">
+                                    <i class="fas fa-info-circle me-1"></i> Changing this value will automatically update the rate used for all <strong>future</strong> claim submissions by this lecturer.
+                                </div>
+                                <span asp-validation-for="HourlyRate" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-check form-switch mb-4 p-3 bg-light rounded">
+                            <input class="form-check-input ms-0 me-3" type="checkbox" asp-for="IsActive">
+                            <label class="form-check-label fw-bold" asp-for="IsActive">Active Account</label>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg shadow-sm">Save Changes</button>
+                            <a asp-action="Index" class="btn btn-light text-muted">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

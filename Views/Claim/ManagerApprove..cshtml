@@ -1,0 +1,79 @@
+﻿@model IEnumerable<Contract_Monthly_Claim_System.Models.Claim>
+@{
+    ViewData["Title"] = "Manager Approval";
+}
+
+<div class="container py-4">
+    <div class="card shadow border-0 rounded-3">
+        <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="mb-0 fw-bold text-primary">Final Approval Queue</h4>
+                <p class="mb-0 text-muted small">Claims verified by coordinators, awaiting financial sign-off.</p>
+            </div>
+            <span class="badge bg-info rounded-pill fs-6">@Model.Count() Reviewing</span>
+        </div>
+
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Claim ID</th>
+                            <th>Lecturer</th>
+                            <th>Total Payout</th>
+                            <th>Verified Date</th>
+                            <th class="text-end pe-4">Decision</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4 font-monospace">#@item.Id.Substring(0, 8)</td>
+                                <td>
+                                    <div class="fw-bold">@item.LecturerId</div>
+                                    <small class="text-muted">@item.Module</small>
+                                </td>
+                                <td>
+                                    <h5 class="mb-0 text-success fw-bold">R @item.Amount.ToString("N2")</h5>
+                                    <small class="text-muted">@item.HoursWorked hrs @@ R @item.HourlyRate</small>
+                                </td>
+                                <td>
+                                    @if (item.LastUpdated.HasValue)
+                                    {
+                                        <span>@item.LastUpdated.Value.ToString("g")</span>
+                                    }
+                                    else
+                                    {
+
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <form asp-action="Approve" method="post">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <button type="submit" class="btn btn-success shadow-sm">
+                                                <i class="fas fa-check-double me-2"></i>Approve
+                                            </button>
+                                        </form>
+                                        <form asp-action="RejectManager" method="post">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <button type="submit" class="btn btn-outline-danger shadow-sm">
+                                                <i class="fas fa-ban"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                        @if (!Model.Any())
+                        {
+                            <tr><td colspan="5" class="text-center py-5 text-muted">No claims waiting for approval.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
