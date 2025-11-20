@@ -13,7 +13,7 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand fw-bold text-primary" asp-controller="Home" asp-action="Index">
                     <i class="fas fa-university me-2"></i>CMCS
@@ -25,7 +25,7 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Dashboard</a>
+                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
 
                         @{
@@ -34,17 +34,19 @@
 
                         @if (role == "Lecturer")
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Claim" asp-action="Submit">Submit Claim</a>
+                            <li class="nav-item ms-2">
+                                <a class="nav-link text-primary" asp-controller="Claim" asp-action="Submit">
+                                    <i class="fas fa-plus-circle me-1"></i> Submit Claim
+                                </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Claim" asp-action="ViewClaims">My Claims</a>
+                            <li class="nav-item ms-2">
+                                <a class="nav-link text-dark" asp-controller="Claim" asp-action="ViewClaims">My History</a>
                             </li>
                         }
 
                         @if (role == "Coordinator")
                         {
-                            <li class="nav-item border-start ms-2 ps-2">
+                            <li class="nav-item border-start ms-3 ps-3">
                                 <a class="nav-link text-primary fw-bold" asp-controller="Claim" asp-action="CoordinatorApprove">
                                     <i class="fas fa-check-circle me-1"></i> Verify Claims
                                 </a>
@@ -53,7 +55,7 @@
 
                         @if (role == "Manager")
                         {
-                            <li class="nav-item border-start ms-2 ps-2">
+                            <li class="nav-item border-start ms-3 ps-3">
                                 <a class="nav-link text-success fw-bold" asp-controller="Claim" asp-action="ManagerApprove">
                                     <i class="fas fa-check-double me-1"></i> Approve Claims
                                 </a>
@@ -62,13 +64,16 @@
 
                         @if (role == "HR")
                         {
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-danger fw-bold" href="#" role="button" data-bs-toggle="dropdown">
+                            <li class="nav-item dropdown ms-2">
+                                <a class="nav-link dropdown-toggle text-danger fw-bold" href="#" data-bs-toggle="dropdown">
                                     <i class="fas fa-users-cog me-1"></i> HR Admin
                                 </a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" asp-controller="HR" asp-action="Index">Manage Lecturers</a></li>
-                                    <li><a class="dropdown-item" asp-controller="HR" asp-action="GenerateReport">Generate Reports</a></li>
+                                <ul class="dropdown-menu shadow">
+                                    <li><a class="dropdown-item" asp-controller="HR" asp-action="Dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" asp-controller="HR" asp-action="Index"><i class="fas fa-users me-2"></i>Manage Lecturers</a></li>
+                                    <li><a class="dropdown-item" asp-controller="HR" asp-action="GenerateReport"><i class="fas fa-file-invoice-dollar me-2"></i>Reports</a></li>
+                                    <li><a class="dropdown-item" asp-controller="HR" asp-action="AuditLog"><i class="fas fa-history me-2"></i>Audit Log</a></li>
                                 </ul>
                             </li>
                         }
@@ -78,21 +83,23 @@
                         @if (!string.IsNullOrEmpty(role))
                         {
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <a class="nav-link dropdown-toggle btn btn-light rounded-pill px-3" href="#" data-bs-toggle="dropdown">
                                     <i class="fas fa-user-circle me-1"></i> @HttpContextAccessor.HttpContext.Session.GetString("UserName")
                                 </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><span class="dropdown-item-text text-muted small">Role: @role</span></li>
+                                <ul class="dropdown-menu dropdown-menu-end shadow">
+                                    <li><span class="dropdown-item-text text-muted small text-uppercase fw-bold">@role Account</span></li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-danger" asp-controller="Account" asp-action="LogoutGet">Logout</a>
-                                    </li>
+                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="ChangePassword"><i class="fas fa-key me-2"></i>Change Password</a></li>
+                                    <li><a class="dropdown-item text-danger" asp-controller="Account" asp-action="Logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                                 </ul>
                             </li>
                         }
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Login</a>
+                                <a class="btn btn-primary rounded-pill px-4" asp-controller="Account" asp-action="Login">
+                                    Login <i class="fas fa-arrow-right ms-1"></i>
+                                </a>
                             </li>
                         }
                     </ul>
@@ -104,14 +111,14 @@
     <div class="container">
         @if (TempData["Success"] != null)
         {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
                 <i class="fas fa-check-circle me-2"></i> @TempData["Success"]
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         }
         @if (TempData["Error"] != null)
         {
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
                 <i class="fas fa-exclamation-circle me-2"></i> @TempData["Error"]
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
@@ -122,9 +129,9 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted mt-5 py-3 bg-light">
+    <footer class="border-top footer text-muted mt-5 py-4 bg-light">
         <div class="container text-center">
-            &copy; 2025 - CMCS - Independent Institute of Education
+            &copy; 2025 - Contract Monthly Claim System - <a asp-controller="Home" asp-action="Privacy">Privacy Policy</a>
         </div>
     </footer>
 

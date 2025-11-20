@@ -28,7 +28,9 @@ namespace Contract_Monthly_Claim_System.Controllers
             _context = context;
         }
 
-        // ===================== LECTURER VIEWS ==========================
+        // ============================================================
+        // LECTURER VIEWS
+        // ============================================================
 
         [HttpGet]
         public async Task<IActionResult> Submit()
@@ -57,7 +59,6 @@ namespace Contract_Monthly_Claim_System.Controllers
             };
 
             ViewBag.LecturerName = lecturer.Name;
-
             return View(model);
         }
 
@@ -82,10 +83,10 @@ namespace Contract_Monthly_Claim_System.Controllers
                 model.Status = ClaimStatus.Pending;
                 model.SubmitDate = DateTime.Now;
 
-                model.Amount = _automationService.CalculateClaimAmount(
-                    model.HoursWorked,
-                    model.HourlyRate);
+                // Automation: Calculate Amount
+                model.Amount = _automationService.CalculateClaimAmount(model.HoursWorked, model.HourlyRate);
 
+                // Automation: Validate Logic
                 var validation = await _automationService.ValidateClaimAsync(model);
 
                 if (!validation.IsValid)
@@ -98,26 +99,25 @@ namespace Contract_Monthly_Claim_System.Controllers
                     return View(model);
                 }
 
-                // REQUIRED FIX — prevent NOT NULL error
                 model.LastModifiedBy = model.LecturerId;
                 model.LastUpdated = DateTime.Now;
 
-                // SAVE CLAIM FIRST
                 _context.Claims.Add(model);
                 await _context.SaveChangesAsync();
 
-                // STEP 2: Upload supporting documents AFTER claim is saved
+                // STEP 2: Upload supporting documents
                 foreach (var file in Documents)
                 {
                     if (file != null && file.Length > 0)
                     {
                         var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-
                         var allowedExtensions = new[] { ".pdf", ".docx", ".xlsx" };
+
                         if (!allowedExtensions.Contains(extension))
                         {
-                            ModelState.AddModelError("Documents", $"File type '{extension}' is not allowed.");
-                            return View(model);
+                            // Note: In a real app, you might want to rollback the claim creation here
+                            TempData["Warning"] = $"Claim saved, but file '{file.FileName}' was rejected (invalid type).";
+                            continue;
                         }
 
                         using var stream = file.OpenReadStream();
@@ -126,7 +126,7 @@ namespace Contract_Monthly_Claim_System.Controllers
                         var doc = new SupportingDocument
                         {
                             Id = Guid.NewGuid().ToString(),
-                            ClaimId = model.Id, // Claim exists now
+                            ClaimId = model.Id,
                             FileName = file.FileName,
                             EncryptedContent = encrypted
                         };
@@ -135,7 +135,6 @@ namespace Contract_Monthly_Claim_System.Controllers
                     }
                 }
 
-                // save docs
                 await _context.SaveChangesAsync();
 
                 TempData["Success"] = $"Claim submitted successfully! Amount: R{model.Amount:N2}";
@@ -164,7 +163,9 @@ namespace Contract_Monthly_Claim_System.Controllers
             return View(claims);
         }
 
-        // ===================== COORDINATOR ==========================
+        // ============================================================
+        // COORDINATOR VIEWS & ACTIONS
+        // ============================================================
 
         public async Task<IActionResult> CoordinatorApprove()
         {
@@ -182,6 +183,7 @@ namespace Contract_Monthly_Claim_System.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Verify(string id)
         {
             var role = HttpContext.Session.GetString("UserRole");
@@ -189,8 +191,7 @@ namespace Contract_Monthly_Claim_System.Controllers
                 return Unauthorized();
 
             var claim = await _context.Claims.FindAsync(id);
-            if (claim == null)
-                return NotFound();
+            if (claim == null) return NotFound();
 
             var result = await _automationService.AutoVerifyClaimAsync(id);
 
@@ -202,7 +203,30 @@ namespace Contract_Monthly_Claim_System.Controllers
             return RedirectToAction("CoordinatorApprove");
         }
 
-        // ===================== MANAGER ==========================
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RejectCoordinator(string id)
+        {
+            var role = HttpContext.Session.GetString("UserRole");
+            if (role != "Coordinator" && role != "Manager" && role != "HR")
+                return Unauthorized();
+
+            var claim = await _context.Claims.FindAsync(id);
+            if (claim == null) return NotFound();
+
+            claim.Status = ClaimStatus.Rejected;
+            claim.LastUpdated = DateTime.Now;
+            claim.LastModifiedBy = HttpContext.Session.GetString("LecturerId");
+            claim.Notes += "\n[Rejected by Coordinator]";
+
+            await _context.SaveChangesAsync();
+            TempData["Success"] = "Claim rejected.";
+            return RedirectToAction("CoordinatorApprove");
+        }
+
+        // ============================================================
+        // MANAGER VIEWS & ACTIONS
+        // ============================================================
 
         public async Task<IActionResult> ManagerApprove()
         {
@@ -219,19 +243,90 @@ namespace Contract_Monthly_Claim_System.Controllers
             return View(claims);
         }
 
-        // ===================== DOCUMENTS ==========================
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Approve(string id)
+        {
+            var role = HttpContext.Session.GetString("UserRole");
+            if (role != "Manager" && role != "HR")
+                return Unauthorized();
+
+            var claim = await _context.Claims.FindAsync(id);
+            if (claim == null) return NotFound();
+
+            claim.Status = ClaimStatus.Approved;
+            claim.LastUpdated = DateTime.Now;
+            claim.LastModifiedBy = HttpContext.Session.GetString("LecturerId");
+
+            await _context.SaveChangesAsync();
+            TempData["Success"] = "Claim approved successfully.";
+            return RedirectToAction("ManagerApprove");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RejectManager(string id)
+        {
+            var role = HttpContext.Session.GetString("UserRole");
+            if (role != "Manager" && role != "HR")
+                return Unauthorized();
+
+            var claim = await _context.Claims.FindAsync(id);
+            if (claim == null) return NotFound();
+
+            claim.Status = ClaimStatus.Rejected;
+            claim.LastUpdated = DateTime.Now;
+            claim.LastModifiedBy = HttpContext.Session.GetString("LecturerId");
+            claim.Notes += "\n[Rejected by Manager]";
+
+            await _context.SaveChangesAsync();
+            TempData["Success"] = "Claim rejected.";
+            return RedirectToAction("ManagerApprove");
+        }
+
+        // ============================================================
+        // DOCUMENT MANAGEMENT
+        // ============================================================
 
         [HttpGet]
         public async Task<IActionResult> DownloadDocument(string docId)
         {
             var doc = await _context.SupportingDocuments.FirstOrDefaultAsync(d => d.Id == docId);
-
-            if (doc == null)
-                return NotFound();
+            if (doc == null) return NotFound();
 
             var decrypted = await _encryptionService.DecryptAsync(doc.EncryptedContent);
-
             return File(decrypted, "application/octet-stream", doc.FileName);
         }
+
+        // =========================================================
+        // SAFETY REDIRECTS (Prevents HTTP 405 Errors)
+        // =========================================================
+
+        [HttpGet] // Catches users typing /Claim/Approve in the browser
+        public IActionResult Approve()
+        {
+            // Redirect to the dashboard instead of showing an error
+            return RedirectToAction("ManagerApprove");
+        }
+
+        [HttpGet]
+        public IActionResult RejectManager()
+        {
+            return RedirectToAction("ManagerApprove");
+        }
+
+        [HttpGet]
+        public IActionResult Verify()
+        {
+            return RedirectToAction("CoordinatorApprove");
+        }
+
+        [HttpGet]
+        public IActionResult RejectCoordinator()
+        {
+            return RedirectToAction("CoordinatorApprove");
+        }
+             
     }
+
 }

@@ -51,16 +51,17 @@
                                 </td>
                                 <td class="text-end pe-4">
                                     <div class="d-flex justify-content-end gap-2">
-                                        <form asp-action="Approve" method="post">
+                                        <form asp-action="Approve" method="post" style="display:inline;">
                                             <input type="hidden" name="id" value="@item.Id" />
-                                            <button type="submit" class="btn btn-success shadow-sm">
-                                                <i class="fas fa-check-double me-2"></i>Approve
+                                            <button type="submit" class="btn btn-success btn-sm">
+                                                Approve
                                             </button>
                                         </form>
-                                        <form asp-action="RejectManager" method="post">
+
+                                        <form asp-action="RejectManager" method="post" style="display:inline;">
                                             <input type="hidden" name="id" value="@item.Id" />
-                                            <button type="submit" class="btn btn-outline-danger shadow-sm">
-                                                <i class="fas fa-ban"></i>
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                Reject
                                             </button>
                                         </form>
                                     </div>

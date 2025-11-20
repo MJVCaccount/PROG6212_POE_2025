@@ -134,27 +134,22 @@ namespace Contract_Monthly_Claim_System.Controllers
         #region Logout Actions
 
         /// <summary>
-        /// POST: Secure logout (preferred method)
-        /// </summary>
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Logout()
-        {
-            HttpContext.Session.Clear();
-            return View("Logout"); // Show the logout page
-        }
-
-        /// <summary>
-        /// GET: Logout for convenience links
+        /// GET: Log out the current user. 
+        /// Marked as HttpGet so the Navbar link works without a form.
         /// </summary>
         [HttpGet]
-        public IActionResult LogoutGet()
+        public IActionResult Logout()
         {
+            // Clear all session data
             HttpContext.Session.Clear();
-            return View("Logout"); // Show the logout page instead of redirecting
+
+            TempData["Success"] = "You have been logged out successfully.";
+
+            // Redirect to Login page (Safer than returning a View that might not exist)
+            return RedirectToAction("Login");
         }
 
-        #endregion // <-- Add this to close the previous #region Logout Actions
+        #endregion
 
         #region Password Management
 
