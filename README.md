@@ -1,86 +1,90 @@
-PROG6212 POE Part 2: Contract Monthly Claim System (CMCS) Prototype
-This repository contains the final source code and updated documentation for the Part 2 submission of the Programming 2B (PROG6212) Portfolio of Evidence (POE).
+# PROG6212 POE Part 3: Contract Monthly Claim System (CMCS) - Final Submission
 
-Youtube link: https://youtu.be/Qm51ov6KOl4
-github link: https://github.com/MJVCaccount/PROG6212_POE_2025
- 
+This repository contains the final full-stack implementation of the Contract Monthly Claim System (CMCS) for the Programming 2B (PROG6212) Portfolio of Evidence (POE). This submission builds upon the Part 2 prototype, transforming it into a secure, database-driven, and automated enterprise web application.
 
-Documentation
-Architecture and Data Persistence Strategy
-The application is built on the ASP.NET Core MVC framework, chosen for its separation of concerns (Models, Views, Controllers), promoting maintainable and scalable web-based code (Troelsen & Japikse, 2022). This cross-platform approach ensures remote accessibility for lecturers and managers.
+- **YouTube Presentation:** [https://youtu.be/CAByRNV5rkY](https://youtu.be/CAByRNV5rkY)
+- **GitHub Repository:** [https://github.com/MJVCaccount/PROG6212_POE_2025](https://github.com/MJVCaccount/PROG6212_POE_2025)
 
-Data Persistence Shift (Part 2 Update)
-The initial plan to use Entity Framework Core (EF Core) and a relational database has been removed to comply with Part 2 requirements.
+---
 
-Current Strategy: Claims are managed by a dedicated Data Service class that holds claims in in-memory collections. This facilitates quick access and manipulation.
+## 📝 Updates for Part 3 (Response to Feedback)
 
-Security & File Handling: Supporting document files are securely stored by applying a basic encryption mechanism upon upload and decryption upon download, adhering to the security requirement.
+Based on the feedback received from Part 2, the following enhancements have been implemented to achieve a robust and professional standard:
 
+1.  **Version Control & Commit Hygiene:**
+    - **Feedback:** "Commits were infrequent or lacked clarity."
+    - **Update:** Adopted an atomic commit strategy. The Part 3 development lifecycle includes frequent, granular commits with descriptive prefixes (e.g., `Feat:`, `Fix:`, `Docs:`) to accurately track the evolution of features.
 
-Constraints and Assumptions
-Constraint: No Identities/Roles – Access is simulated via hardcoded IDs to differentiate the Lecturer, Programme Coordinator, and Academic Manager views. No login/registration is implemented.
+2.  **System Robustness & Validation:**
+    - **Feedback:** "Ensure functionality meets automation standards and error handling is robust."
+    - **Update:** Critical business logic was moved from client-side JavaScript to a dedicated server-side `ClaimAutomationService`. This ensures that calculations (Hours * Rate) and validations (Policy violations) are tamper-proof and secure.
 
-Constraint: Validation – Business rules are enforced via Data Annotation attributes (e.g., enforcing an hour range between 1 and 160).
+3.  **Security & Access Control:**
+    - **Update:** Implemented strict **Role-Based Access Control (RBAC)** using Sessions. Public registration has been removed; users can now only be onboarded by the HR Admin to ensure system integrity.
 
-Assumption: The hourly rate is pre-established and read-only on the submission form.
+---
 
-Design: The GUI is designed to be user-friendly and intuitive using Bootstrap for responsive layouts, minimizing potential submission errors (Japikse & Troelsen, 2022).
+## 🏗 System Architecture
 
+The application is built on the **ASP.NET Core MVC (Net 8.0)** framework, adhering to the separation of concerns principle.
 
+### Data Persistence (New for Part 3)
+- **Technology:** Microsoft SQL Server (LocalDB).
+- **ORM:** Entity Framework Core (Code-First Approach).
+- **Schema Strategy:** The database schema (`Lecturers`, `Claims`, `SupportingDocuments`) was generated dynamically from C# models. This replaces the in-memory lists used in Part 2, ensuring persistent and reliable data storage.
+- **Seeding:** The application includes an automated seeder (`Program.cs`) that populates the database with default Admin, HR, and Lecturer accounts upon the first run.
 
-Project Plan (Agile Approach)
-The project development followed an agile, iterative approach over a 2-week period, ensuring systematic development guided by dependencies, milestones, and risk mitigation strategies (Troelsen & Japikse, 2022). The plan approximated a total effort of about 38 hours.
+### Design & UI
+- **Style:** A modern **"Glassmorphism"** aesthetic using custom CSS variables and Bootstrap 5.
+- **Features:** Semi-transparent cards, smooth `FadeInUp` animations, and a responsive mobile-first layout to minimize user fatigue.
 
-Development was guided by the agile principles of iterative development (Troelsen & Japikse, 2022).
+---
 
-Version Control: Regular commits and pushes to GitHub were maintained, ensuring a minimum of 10 commits with descriptive messages.
+## 🚀 Key Features
 
-Milestones: Week 1 focused on initial research, schema design, and basic setup. Week 2 focused on core Part 2 feature implementation, testing, and final documentation.
+### 1. HR "Super User" & Administration (New)
+- **Centralized Onboarding:** Public registration is disabled. HR Admins add new Lecturers, Coordinators, and Managers via a secured dashboard.
+- **Rate Management:** HR sets the **Hourly Rate** during onboarding. This value is locked and cannot be edited by the lecturer, preventing fraud.
+- **Reporting:** HR can generate payment reports using **LINQ** aggregations to view total hours and payouts per lecturer.
 
+### 2. Lecturer Automation
+- **Auto-Calculation:** The "Total Amount" is calculated automatically server-side (`Hours * Rate`). The Hourly Rate is pulled from the database and displayed as read-only.
+- **Server-Side Validation:** Claims exceeding **180 hours** are automatically rejected by the `ClaimAutomationService` with clear error messaging.
+- **Document Security:** Supporting documents are encrypted before storage and decrypted only upon authorized download.
 
+### 3. Approval Workflows
+- **Coordinator View:** Verifies pending claims.
+- **Manager View:** Performs final financial approval (Approve/Reject).
+- **Tracking:** Lecturers can track the status of their claims in real-time (Pending -> Verified -> Approved).
 
-GUI/UI Implemented Features
-The UI is built using ASP.NET Core MVC views, emphasizing responsive design via Bootstrap for cross-device compatibility (Troelsen & Japikse, 2022).
+---
 
-Lecturer View
-Claim Submission (Submit.cshtml): Features a form for Hours Worked (with validation), Hourly Rate (read-only), Module, and Notes.
+## 🛠 Setup & Login Instructions
 
-Document Upload: Supports multi-file upload with validation enforcing a Max 5MB size limit and restricted file types: .pdf, .docx, and .xlsx. The successful upload shows the file name, and the controller handles secure encryption (Japikse & Troelsen, 2022).
+### Prerequisites
+- Visual Studio 2022
+- .NET 8.0 SDK
+- SQL Server LocalDB
 
-Claim Tracking (ViewClaims.cshtml): Claims are listed with a visual status tracker: a progress bar showing 33% (Pending), 66% (Under Review), or 100% (Approved/Rejected).
+### Database Setup
+No manual SQL scripts are required. The application uses **EF Core Code-First Migrations**.
+1. Open the solution in Visual Studio.
+2. Run the application (F5).
+3. The application will automatically create the database (`ClaimsDB`) and seed the test users if they do not exist.
 
+### Default Login Credentials
+Use these credentials to test the different roles:
 
-Administrator Views (X2 Separate Views)
-The approval workflow is separated into two distinct pages:
+| Role | User ID | Password |
+| :--- | :--- | :--- |
+| **HR Admin** | `HR2025001` | `Admin@123` |
+| **Lecturer** | `IIE2024001` | `Lecturer@123` |
+| **Coordinator** | `COORD2025001` | `Coord@123` |
+| **Manager** | `MGR2025001` | `Manager@123` |
 
-Programme Coordinator View (CoordinatorApprove.cshtml): Displays Pending claims only. Actions: Verify (moves status to Under Review) and Reject.
+---
 
-Academic Manager View (ManagerApprove.cshtml): Displays Under Review claims only. Actions: Approve (final status) and Reject.
-
-Both views display necessary claim information and include links to view/download the supporting documents, triggering the system's decryption logic.
-
-
-
-
-References
-Japiklse, P. & Troelsen, A., 2022. In: Pro C# 10 with .NET 6: Foundational Principles and Practices in Programming. New York: Apress, p. 921.
-
-Japikse, P. & Troelsen, A., 2022. In: Pro C# 10 with .NET 6: Foundational Principles and Practices in Programming. New York: Apress, p. 847.
-
-Japikse, P. & Troelsen, A., 2022. In: Pro C# 10 with .NET 6: Foundational Principles and Practices in Programming. New York: Apress, p. 1520.
-
-Japikse, P. & Troelsen, A., 2022. In: Pro C# 10 with .NET 6: Foundational Principles and Practices in Programming. New York: Apress, p. 1007.
-
-Japikse, P. & Troelsen, A., 2022. In: Pro C# 10 with .NET 6: Foundational Principles and Practices in Programming. New York: Apress, p. 1015.
-
-Japkise, P. & Troelsen, A., 2022. In: Pro C# 10 with .NET 6: Foundational Principles and Practices in Programming. New York: Apress, p. 911.
-
-Troelsen, A. & Japikse, P., 2022. In: Pro C# 10 with .NET 6: Foundational Principles and Practices in Programming. New York: Apress, p. 1359.
-
-Troelsen, A. & Japikse, P., 2022. In: Pro C# 10 with .NET 6: Foundational Principles and Practices in Programming. New York: Apress, p. 1364.
-
-Troelsen, A. & Japikse, P., 2022. In: Pro C# 10 with .NET 6: Foundational Principles and Practices in Programming. New York: Apress, p. 959.
-
-Troelsen, A. & Japikse, P., 2022. In: Pro C# 10 with .NET 6: Foundational Principles and Practices in Programming. New York: Apress, p. 1039.
-
-Troelsen, A. & Japikse, P., 2022. Pro C# 10 with .NET 6: Foundational Principles and Practices in Programming. 11 ed. New York: Apress.
+## 📚 References
+- Japikse, P. & Troelsen, A., 2022. *Pro C# 10 with .NET 6: Foundational Principles and Practices in Programming*. New York: Apress.
+- Microsoft, 2024. *ASP.NET Core Documentation*. [Online] Available at: https://learn.microsoft.com/en-us/aspnet/core/
+- Troelsen, A. & Japikse, P., 2022. *Pro C# 10 with .NET 6: Foundational Principles and Practices in Programming*. 11 ed. New York: Apress.
